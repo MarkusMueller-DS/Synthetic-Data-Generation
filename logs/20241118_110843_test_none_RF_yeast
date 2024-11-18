@@ -1,0 +1,48 @@
+INFO: --------------------------------------------------
+INFO: Timestamp: 20241118_110843
+INFO: Dataset: yeast
+INFO: Synthetic Data Generation Algo: none
+INFO: Classification Model: RF
+INFO: Type of Run: test
+INFO: --------------------------------------------------
+INFO: Shape of train and test data
+INFO: X_train: (713, 8)
+INFO: y_train: (713,)
+INFO: X_test: (179, 8)
+INFO: y_test: (179,)
+INFO: --------------------------------------------------
+INFO: Shape of train and test data
+INFO: Timestamp: 20241118_111219
+INFO: X_train: (713, 8)
+INFO: y_train: (713,)
+INFO: X_test: (179, 8)
+INFO: y_test: (179,)
+INFO: --------------------------------------------------
+INFO: Stating training of classifier: 20241118_111334
+INFO: Hyperparameter of Classification Model:
+INFO: {'bootstrap': True, 'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': None, 'max_features': 'sqrt', 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'monotonic_cst': None, 'n_estimators': 100, 'n_jobs': None, 'oob_score': False, 'random_state': 42, 'verbose': 0, 'warm_start': False}
+INFO: Finished training of classifier: 20241118_111823
+INFO: --------------------------------------------------
+INFO: Evaluations Metrics
+INFO: Accuracy Score: 0.7262569832402235
+INFO: Classification Report:
+INFO:               precision    recall  f1-score   support
+
+         CYT       0.73      0.74      0.74        93
+         NUC       0.72      0.71      0.71        86
+
+    accuracy                           0.73       179
+   macro avg       0.73      0.73      0.73       179
+weighted avg       0.73      0.73      0.73       179
+
+INFO: --------------------------------------------------
+INFO: Saving results...
+INFO: Results saved
+INFO: --------------------------------------------------
+INFO: Dataset infos
+INFO: Class imbalance ratio: 26.038338658146966
+INFO: --------------------------------------------------
+INFO: Dataset infos
+INFO: Class imbalance ratio: 26.038338658146966
+INFO: # Majority class: 463
+INFO: # Minority class: 163
