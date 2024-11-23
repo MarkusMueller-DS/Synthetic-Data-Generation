@@ -166,3 +166,5 @@ cython_debug/
 data/raw/creditcard.csv
 
 envs/
+
+CTAB-GAN-plus/
