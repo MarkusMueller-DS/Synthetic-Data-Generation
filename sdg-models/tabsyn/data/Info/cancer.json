@@ -1,0 +1,17 @@
+{
+    "name": "cancer",
+    "task_type": "binclass",
+    "header": "infer",
+    "column_names": null,
+    "num_col_idx": [
+        ""
+    ],
+    "cat_col_idx": [
+        ""
+    ],
+    "target_col_idx": [list
+    ], # list of indices of the target columns (for MLE)
+    "file_type": "csv",
+    "data_path": "data/[NAME_OF_DATASET]/[NAME_OF_DATASET].csv",
+    "test_path": null
+}
