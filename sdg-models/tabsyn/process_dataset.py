@@ -338,5 +338,5 @@ if __name__ == "__main__":
         process_data(args.dataname)
     else:
         # for name in ['adult', 'default', 'shoppers', 'magic', 'beijing', 'news']:
-        for name in ["adult"]:
+        for name in ["cancer"]:
             process_data(name)
