@@ -2,7 +2,25 @@ import os
 import pandas as pd
 from sdv.single_table import CTGANSynthesizer
 from sdv.metadata import Metadata
-from datetime import datetime
+
+
+def get_min_maj(dataset):
+    DATA_PATH = f"data/processed/{dataset}/train.csv"
+    train_df = pd.read_csv(DATA_PATH)
+
+    counts = train_df["income"].value_counts()
+    minority_category = counts.idxmin()
+    majority_category = counts.idxmax()
+
+    count_min = train_df[train_df["income"] == minority_category].shape[0]
+    count_max = train_df[train_df["income"] == majority_category].shape[0]
+
+    count_sample = count_max - count_min
+
+    print(count_max, count_min)
+    print(count_sample)
+
+    return count_sample
 
 
 def train(dataset):
@@ -34,13 +52,29 @@ def train(dataset):
 
     # Save synthesizer
     os.makedirs("models/adult", exist_ok=True)
-    SAVE_PATH = f'models/adult/ctgan_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pkl'
-    synthesizer.save(SAVE_PATH)
+    save_path = "models/adult/ctgan.pkl"
+    synthesizer.save(save_path)
+
+    print(f"Synthesizer saved in: {save_path}")
 
 
 def sample(dataset):
     print("sample")
-    pass
+    num_sample = get_min_maj(dataset)
+
+    # load the synthesizer
+    synthesizer = CTGANSynthesizer.load(filepath=f"models/{dataset}/ctgan.pkl")
+
+    # sample
+    syn_data = synthesizer.sample(num_rows=num_sample)
+
+    print(syn_data)
+
+    os.makedirs(f"data/synthetic/{dataset}", exist_ok=True)
+    save_path = f"data/synthetic/{dataset}/ctgan.csv"
+    syn_data.to_csv(save_path, index=False)
+
+    print(f"Synthetic data saved in:{save_path}")
 
 
 def main(args):
