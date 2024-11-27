@@ -10,11 +10,11 @@ DATA_DIR = 'data'
 
 NAME_URL_DICT_UCI = {
     'adult': 'https://archive.ics.uci.edu/static/public/2/adult.zip',
-    'default': 'https://archive.ics.uci.edu/static/public/350/default+of+credit+card+clients.zip',
-    'magic': 'https://archive.ics.uci.edu/static/public/159/magic+gamma+telescope.zip',
-    'shoppers': 'https://archive.ics.uci.edu/static/public/468/online+shoppers+purchasing+intention+dataset.zip',
-    'beijing': 'https://archive.ics.uci.edu/static/public/381/beijing+pm2+5+data.zip',
-    'news': 'https://archive.ics.uci.edu/static/public/332/online+news+popularity.zip'
+    #'default': 'https://archive.ics.uci.edu/static/public/350/default+of+credit+card+clients.zip',
+    #'magic': 'https://archive.ics.uci.edu/static/public/159/magic+gamma+telescope.zip',
+    #'shoppers': 'https://archive.ics.uci.edu/static/public/468/online+shoppers+purchasing+intention+dataset.zip',
+    #'beijing': 'https://archive.ics.uci.edu/static/public/381/beijing+pm2+5+data.zip',
+    #'news': 'https://archive.ics.uci.edu/static/public/332/online+news+popularity.zip'
 }
 
 def unzip_file(zip_filepath, dest_path):
