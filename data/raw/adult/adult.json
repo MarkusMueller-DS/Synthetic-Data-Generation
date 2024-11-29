@@ -63,5 +63,7 @@
         "income": "str"
     },
     "train_num": 32561,
-    "test_num": 16281
+    "test_num": 16281,
+    "min_class": ">50K",
+    "maj_class": "<=50K"
 }

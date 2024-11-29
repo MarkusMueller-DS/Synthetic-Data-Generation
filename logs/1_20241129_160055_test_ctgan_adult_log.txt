@@ -1,5 +1,0 @@
-INFO: --------------------------------------------------
-INFO: Timestamp: 20241129_160055
-INFO: Dataset: adult
-INFO: Synthetic Data Generation Algo: ctgan
-INFO: Type of Run: test
