@@ -4,6 +4,10 @@ from sdv.single_table import CTGANSynthesizer
 from sdv.metadata import Metadata
 
 
+# ToDo: add Cuda implementation
+# https://github.com/sdv-dev/SDV/blob/main/sdv/single_table/ctgan.py
+# runs fine on local cpu but would be faster with gpu
+
 def get_min_maj(dataset):
     DATA_PATH = f"data/processed/{dataset}/train.csv"
     train_df = pd.read_csv(DATA_PATH)

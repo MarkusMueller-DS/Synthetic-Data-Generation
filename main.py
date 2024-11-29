@@ -18,7 +18,7 @@ def parse_arguments():
         help="Name of the model to use (e.g., 'model1').",
     )
     parser.add_argument(
-        "--dataset", type=str, required=True, help="Path to the dataset to use."
+        "--dataset", type=str, required=True, help="Name of the dataset (e.g., 'adult')"
     )
     parser.add_argument(
         "--mode",
