@@ -72,7 +72,7 @@ def process_adult():
         test_df.loc[test_df[col] == "?", col] = "nan"
 
     # save data
-    PROCESSED_DATA_PATH = "data/processed/adult"
+    PROCESSED_DATA_PATH = f"data/processed/{args.dataset}"
     # certe folder
     os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
 
