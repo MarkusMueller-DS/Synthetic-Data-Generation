@@ -8,6 +8,7 @@ from sdv.metadata import Metadata
 # https://github.com/sdv-dev/SDV/blob/main/sdv/single_table/ctgan.py
 # runs fine on local cpu but would be faster with gpu
 
+
 def get_min_maj(dataset):
     DATA_PATH = f"data/processed/{dataset}/train.csv"
     train_df = pd.read_csv(DATA_PATH)
@@ -27,16 +28,17 @@ def get_min_maj(dataset):
     return count_sample
 
 
-def train(dataset):
+def train(args):
     print("train")
 
     # load dataset
-    DATA_PATH = f"data/processed/{dataset}/train.csv"
+    DATA_PATH = f"data/processed/{args.dataset}/train.csv"
 
     train_df = pd.read_csv(DATA_PATH)
 
     print(train_df)
 
+    # ToDo: refactor -> information is now in info json
     # find minority and majoirity class
     counts = train_df["income"].value_counts()
     minority_category = counts.idxmin()
@@ -46,36 +48,38 @@ def train(dataset):
     print(df_train_min)
 
     # CTGAN needs specific metadata
-    metadata = Metadata.detect_from_dataframe(data=df_train_min, table_name="adult")
+    metadata = Metadata.detect_from_dataframe(data=df_train_min, table_name=args.model)
 
     # create and train CTGAN
     synthesizer = CTGANSynthesizer(metadata)
     synthesizer.fit(df_train_min)
 
-    print(synthesizer.get_loss_values())
+    # print(synthesizer.get_loss_values())
 
     # Save synthesizer
-    os.makedirs("models/adult", exist_ok=True)
-    save_path = "models/adult/ctgan.pkl"
+    os.makedirs(f"models/{args.dataset}", exist_ok=True)
+    save_path = f"models/{args.dataset}/{args.model}.pkl"
     synthesizer.save(save_path)
 
     print(f"Synthesizer saved in: {save_path}")
 
 
-def sample(dataset):
+def sample(args):
     print("sample")
-    num_sample = get_min_maj(dataset)
+    num_sample = get_min_maj(args.dataset)
 
     # load the synthesizer
-    synthesizer = CTGANSynthesizer.load(filepath=f"models/{dataset}/ctgan.pkl")
+    synthesizer = CTGANSynthesizer.load(
+        filepath=f"models/{args.dataset}/{args.model}.pkl"
+    )
 
     # sample
     syn_data = synthesizer.sample(num_rows=num_sample)
 
     print(syn_data)
 
-    os.makedirs(f"data/synthetic/{dataset}", exist_ok=True)
-    save_path = f"data/synthetic/{dataset}/ctgan.csv"
+    os.makedirs(f"data/synthetic/{args.dataset}", exist_ok=True)
+    save_path = f"data/synthetic/{args.dataset}/{args.model}.csv"
     syn_data.to_csv(save_path, index=False)
 
     print(f"Synthetic data saved in:{save_path}")
@@ -84,8 +88,7 @@ def sample(dataset):
 def main(args):
     print("Gude from ctgan")
 
-    dataset = args.dataset
     if args.mode == "train":
-        train(dataset)
+        train(args)
     if args.mode == "sample":
-        sample(dataset)
+        sample(args)

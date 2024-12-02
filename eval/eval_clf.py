@@ -99,7 +99,7 @@ logger.info(f"Type of Run: {RUN}")
 
 
 def impute_missing_values(df):
-    # Category: repalce na with "missing"
+    # Category: repalce nan with "missing"
     cat_columns_idx = info["cat_col_idx"]
     columns_names = info["column_names"]
     cat_columns_names = [columns_names[i] for i in cat_columns_idx]
