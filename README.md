@@ -19,3 +19,7 @@ Repo for bachelor Thesis
 ### 4. Sample SDG-Models
 
 `python main.py --dataset adult --model ctgan --mode sample`
+
+### 5. Evalution with classification models
+
+`python eval/eval.py --dataset adult --model ctgan --run test`
