@@ -1,11 +1,21 @@
 import os
 import zipfile
 from urllib import request
+import shutil
 
 
-DATA_DIR = "./data/raw"
+DATA_DIR = "data/raw"
 
 NAME_URL_DICT_UCI = {"adult": "https://archive.ics.uci.edu/static/public/2/adult.zip"}
+
+
+# Test if data exists and if ther is also processed
+# deletet everything for faster testing
+# can be removed once testing is done
+def delete_files(name):
+    if os.path.exists(f"{DATA_DIR}/{name}"):
+        shutil.rmtree(f"{DATA_DIR}/{name}")
+        print("deleted existing folder")
 
 
 def unzip_file(zip_filepath, dest_path):
@@ -34,4 +44,5 @@ def download_from_uci(name):
 
 if __name__ == "__main__":
     for name in NAME_URL_DICT_UCI.keys():
+        delete_files(name)
         download_from_uci(name)

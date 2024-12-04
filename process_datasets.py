@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import numpy as np
 import argparse
+import shutil
 
 
 DATA_PATH = "data/raw"
@@ -17,7 +18,7 @@ def process_adult():
     print("Processing adult dataset")
 
     print("Check if info.json is present in folder")
-    INFO_PATH = f"{DATA_PATH}/adult/adult.json"
+    INFO_PATH = f"{DATA_PATH}/info/adult.json"
     print("info_path:", INFO_PATH)
     if not os.path.exists(INFO_PATH):
         raise FileNotFoundError(f"The file does not exists")
@@ -36,6 +37,7 @@ def process_adult():
     num_col_idx = info["num_col_idx"]
     cat_col_idx = info["cat_col_idx"]
     column_names = info["column_names"]
+    target_col_idx = info["target_col_idx"]
 
     num_columns = [column_names[i] for i in num_col_idx]
     cat_columns = [column_names[i] for i in cat_col_idx]
@@ -55,6 +57,27 @@ def process_adult():
                         f1.write(f"{save_line}\n")
 
         test_df = pd.read_csv(test_save_path, header=None, skipinitialspace=True)
+
+    # ToDo: do I really need this?
+    # add more information to info json
+    col_info = {}
+    for col_idx in num_col_idx:
+        col_info[col_idx] = {}
+        col_info["type"] = "numerical"
+        col_info["max"] = float(train_df[col_idx].max())
+        col_info["min"] = float(train_df[col_idx].min())
+
+    for col_idx in cat_col_idx:
+        col_info[col_idx] = {}
+        col_info["type"] = "categorical"
+        col_info["categorizes"] = list(set(train_df[col_idx]))
+
+    for col_idx in target_col_idx:
+        col_info[col_idx] = {}
+        col_info["type"] = "categorical"
+        col_info["categorizes"] = list(set(train_df[col_idx]))
+
+    info["column_info"] = col_info
 
     # add column names to dataframes
     train_df.columns = column_names
@@ -76,14 +99,45 @@ def process_adult():
     # certe folder
     os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
 
-    train_df.to_csv(info["train_path_processed"], index=False)
-    test_df.to_csv(info["test_path_processed"], index=False)
-
     # Todo: add validation and information about train & test
+
+    # Save data specifc for tabsyn
+    X_num_train = train_df[num_columns].to_numpy().astype(np.float32)
+    X_cat_train = train_df[cat_columns].to_numpy()
+    y_train = train_df["income"].to_numpy()
+
+    X_num_test = test_df[num_columns].to_numpy().astype(np.float32)
+    X_cat_test = test_df[cat_columns].to_numpy()
+    y_test = test_df["income"].to_numpy()
+
+    np.save(f"{PROCESSED_DATA_PATH}/X_num_train.npy", X_num_train)
+    np.save(f"{PROCESSED_DATA_PATH}/X_cat_train.npy", X_cat_train)
+    np.save(f"{PROCESSED_DATA_PATH}/y_train.npy", y_train)
+
+    np.save(f"{PROCESSED_DATA_PATH}/X_num_test.npy", X_num_test)
+    np.save(f"{PROCESSED_DATA_PATH}/X_cat_test.npy", X_cat_test)
+    np.save(f"{PROCESSED_DATA_PATH}/y_test.npy", y_test)
+
+    train_df[num_columns] = train_df[num_columns].astype(np.float32)
+    test_df[num_columns] = test_df[num_columns].astype(np.float32)
+
+    train_df.to_csv(f"{PROCESSED_DATA_PATH}/train.csv", index=False)
+    test_df.to_csv(f"{PROCESSED_DATA_PATH}/test.csv", index=False)
+
+    # add paths to info.json
+    info["train_path_processed"] = f"{PROCESSED_DATA_PATH}/train.csv"
+    info["test_path_processed"] = f"{PROCESSED_DATA_PATH}/test.csv"
+
+    print("Numerical", X_num_train.shape)
+    print("Categorical", X_cat_train.shape)
 
 
 def process_data(name_dataset):
     if name_dataset == "adult":
+        # can be removed once testing is done
+        if os.path.exists("data/processed/adult"):
+            shutil.rmtree("data/processed/adult")
+            print("deleting exising files")
         process_adult()
 
 
