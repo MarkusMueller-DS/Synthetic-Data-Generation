@@ -76,6 +76,6 @@ if __name__ == "__main__":
 
     # check cuda
     if args.gpu != -1 and torch.cuda.is_available():
-        args.device = f"cuda:{args.gpu}"
+        args.device = f"cuda:{1}"
     else:
         args.device = "cpu"
