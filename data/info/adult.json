@@ -36,9 +36,7 @@
         9,
         13
     ],
-    "target_col_idx": [
-        14
-    ],
+    "target_col_idx": 14,
     "file_type": "csv",
     "data_path": "data/raw/adult/adult.data",
     "test_path": "data/raw/adult/adult.test"

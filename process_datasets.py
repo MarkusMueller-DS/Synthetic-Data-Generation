@@ -6,8 +6,6 @@ import argparse
 import shutil
 
 
-DATA_PATH = "data/raw"
-
 parser = argparse.ArgumentParser(description="process dataset")
 
 parser.add_argument("--dataset", type=str, default=None, help="Name of dataset")
@@ -18,7 +16,7 @@ def process_adult():
     print("Processing adult dataset")
 
     print("Check if info.json is present in folder")
-    INFO_PATH = f"{DATA_PATH}/info/adult.json"
+    INFO_PATH = "data/info/adult.json"
     print("info_path:", INFO_PATH)
     if not os.path.exists(INFO_PATH):
         raise FileNotFoundError(f"The file does not exists")
@@ -31,7 +29,9 @@ def process_adult():
     # print(info)
 
     # load train dataset
-    train_df = pd.read_csv(info["train_path_raw"], header=None, skipinitialspace=True)
+    train_df = pd.read_csv(
+        info["data_path"], header=info["header"], skipinitialspace=True
+    )
 
     # get columns
     num_col_idx = info["num_col_idx"]
@@ -43,9 +43,9 @@ def process_adult():
     cat_columns = [column_names[i] for i in cat_col_idx]
 
     # load test, which needs more processing
-    if info["test_path_raw"]:
+    if info["test_path"]:
         # if testing data is given
-        test_path = info["test_path_raw"]
+        test_path = info["test_path"]
 
         with open(test_path, "r") as f:
             lines = f.readlines()[1:]
@@ -62,22 +62,27 @@ def process_adult():
     # add more information to info json
     col_info = {}
     for col_idx in num_col_idx:
-        col_info[col_idx] = {}
-        col_info["type"] = "numerical"
-        col_info["max"] = float(train_df[col_idx].max())
-        col_info["min"] = float(train_df[col_idx].min())
+        col_info[col_idx] = {
+            "type": "numerical",
+            "max": float(train_df[col_idx].max()),
+            "min": float(train_df[col_idx].min()),
+        }
 
     for col_idx in cat_col_idx:
-        col_info[col_idx] = {}
-        col_info["type"] = "categorical"
-        col_info["categorizes"] = list(set(train_df[col_idx]))
+        col_info[col_idx] = {
+            "type": "categorical",
+            "categories": list(set(train_df[col_idx])),
+        }
 
-    for col_idx in target_col_idx:
-        col_info[col_idx] = {}
-        col_info["type"] = "categorical"
-        col_info["categorizes"] = list(set(train_df[col_idx]))
+    # target col info
+    col_info[target_col_idx] = {
+        "type": "categorical",
+        "categories": list(set(train_df[col_idx])),
+    }
 
     info["column_info"] = col_info
+
+    print(info["column_info"])
 
     # add column names to dataframes
     train_df.columns = column_names
@@ -124,12 +129,37 @@ def process_adult():
     train_df.to_csv(f"{PROCESSED_DATA_PATH}/train.csv", index=False)
     test_df.to_csv(f"{PROCESSED_DATA_PATH}/test.csv", index=False)
 
+    # add more information to info.json
+
     # add paths to info.json
     info["train_path_processed"] = f"{PROCESSED_DATA_PATH}/train.csv"
     info["test_path_processed"] = f"{PROCESSED_DATA_PATH}/test.csv"
 
+    info["column_names"] = column_names
+    info["train_num"] = train_df.shape[0]
+    info["test_num"] = test_df.shape[0]
+
     print("Numerical", X_num_train.shape)
     print("Categorical", X_cat_train.shape)
+
+    metadata = {"columns": {}}
+
+    for i in num_col_idx:
+        metadata["columns"][i] = {}
+        metadata["columns"][i]["sdtype"] = "numerical"
+        metadata["columns"][i]["computer_representation"] = "Float"
+
+    for i in cat_col_idx:
+        metadata["columns"][i] = {}
+        metadata["columns"][i]["sdtype"] = "categorical"
+
+    metadata["columns"][target_col_idx] = {}
+    metadata["columns"][target_col_idx]["sdtype"] = "categorical"
+
+    info["metadata"] = metadata
+
+    with open(f"{PROCESSED_DATA_PATH}/info.json", "w") as file:
+        json.dump(info, file, indent=4)
 
 
 def process_data(name_dataset):
