@@ -1,5 +1,6 @@
 {
     "name": "adult",
+    "task_type": "binclass",
     "header": null,
     "column_names": [
         "age",

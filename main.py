@@ -1,6 +1,7 @@
 import os
 import argparse
 import importlib.util
+import sys
 
 
 def parse_arguments():
@@ -32,8 +33,11 @@ def parse_arguments():
 
 
 def execute_function(model, mode):
+    print(sys.path)
     if model == "ctgan":
         module_name = "sdg-models.ctgan.ctgan"
+    if model == "vae":
+        module_name = "sdg-models.tabsyn.tabsyn.vae.main"
 
     try:
         module = importlib.import_module(module_name)
