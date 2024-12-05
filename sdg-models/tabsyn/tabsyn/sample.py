@@ -13,11 +13,15 @@ warnings.filterwarnings("ignore")
 
 def main(args):
     dataname = args.dataname
-    device = args.device
+    # device = args.device
+    device = "cpu"
     steps = args.steps
     save_path = args.save_path
 
     train_z, _, _, ckpt_path, info, num_inverse, cat_inverse = get_input_generate(args)
+    print(train_z)
+    print(type(train_z))
+    print(train_z.shape)
     in_dim = train_z.shape[1]
 
     mean = train_z.mean(0)

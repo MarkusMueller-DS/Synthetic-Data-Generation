@@ -20,7 +20,16 @@ args = parser.parse_args()
 def only_minority_class_in_df(df, target_col, min_class):
     print("target_col:", target_col)
     print("min_class:", min_class)
-    return df[df[target_col[0]] == min_class]
+    df_min = df[df[target_col[0]] == min_class]
+    # add one row from maj_class
+    df_maj = df[df[target_col[0]] != min_class]
+    random_maj_row = df_maj.sample(1)
+
+    df_final = pd.concat([df_min, random_maj_row], ignore_index=True)
+
+    print(df_final[target_col[0]].value_counts())
+
+    return df_final
 
 
 def get_column_name_mapping(
@@ -153,8 +162,8 @@ def process_data(name):
     print(name, train_df.shape, test_df.shape, data_df.shape)
 
     # Filter to only have the minority class in the dataset
-    # train_df = only_minority_class_in_df(train_df, target_col_idx, ">50K")
-    # test_df = only_minority_class_in_df(test_df, target_col_idx, ">50K")
+    train_df = only_minority_class_in_df(train_df, target_col_idx, ">50K")
+    test_df = only_minority_class_in_df(test_df, target_col_idx, ">50K")
 
     print(train_df)
     print(test_df)
