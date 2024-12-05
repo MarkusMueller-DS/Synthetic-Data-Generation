@@ -636,6 +636,16 @@ class CTABGANSynthesizer:
 
             epoch += 1
 
+        # add code to save the model
+        model_save_path = "ctab-gan-plus_model"
+        torch.save(self.generator.state_dict(), model_save_path)
+
+        # code to load the model
+        # generator = Generator(self.gside, layers_G).to(self.device)
+        # generator.load_state_dict(torch.load(model_save_path))
+        # generator.eval()  # Setzt das Modell in den Evaluierungsmodus
+        # print("Das Modell wurde erfolgreich geladen.")
+
     def sample(self, n):
 
         self.generator.eval()
