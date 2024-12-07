@@ -266,6 +266,8 @@
     "test_path_processed": "data/processed/adult/test.csv",
     "train_num": 32561,
     "test_num": 16281,
+    "maj_class": "<=50K",
+    "min_class": ">50K",
     "metadata": {
         "columns": {
             "0": {
