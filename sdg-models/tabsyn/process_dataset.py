@@ -184,7 +184,6 @@ def process_data(name):
     print("min_class:", minority_class)
     print("maj_class:", majority_class)
     print("target_col_idx:", target_col_idx[0])
-    # dose not work when majority_class is used as a variable
     minority_df = train_df[train_df[target_col_idx[0]] == minority_class]
     majoirty_df = train_df[train_df[target_col_idx[0]] == majority_class]
     print("size minority df:", minority_df.shape)
