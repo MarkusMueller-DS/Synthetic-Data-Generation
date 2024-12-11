@@ -37,7 +37,8 @@ def main(args):
     """
     start_time = time.time()
 
-    num_samples = train_z.shape[0]
+    #num_samples = train_z.shape[0]
+    num_samples = 33758
     print("num_sample:", num_samples)
     sample_dim = in_dim
 

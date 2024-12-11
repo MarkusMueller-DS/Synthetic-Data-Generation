@@ -40,6 +40,7 @@
     "target_col_idx": [
         14
     ],
+    "target_col": "income",
     "file_type": "csv",
     "data_path": "data/adult/adult.data",
     "test_path": "data/adult/adult.test",
@@ -55,8 +56,8 @@
         "12": {},
         "1": {},
         "categorizes": [
-            ">50K",
-            "<=50K"
+            "<=50K",
+            ">50K"
         ],
         "3": {},
         "5": {},
@@ -67,8 +68,10 @@
         "13": {},
         "14": {}
     },
-    "train_num": 7842,
-    "test_num": 3847,
+    "train_num": 15682,
+    "test_num": 16281,
+    "majority_class": "<=50K",
+    "minority_class": ">50K",
     "idx_mapping": {
         "0": 0,
         "1": 6,

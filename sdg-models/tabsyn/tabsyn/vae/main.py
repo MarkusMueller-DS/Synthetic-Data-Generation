@@ -251,7 +251,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataname", type=str, default="adult", help="Name of dataset."
     )
-    parser.add_argument("--gpu", type=int, default=0, help="GPU index.")
+    parser.add_argument("--gpu", type=int, default=1, help="GPU index.")
     parser.add_argument("--max_beta", type=float, default=1e-2, help="Initial Beta.")
     parser.add_argument("--min_beta", type=float, default=1e-5, help="Minimum Beta.")
     parser.add_argument("--lambd", type=float, default=0.7, help="Decay of Beta.")
