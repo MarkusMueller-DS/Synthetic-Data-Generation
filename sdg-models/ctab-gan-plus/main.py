@@ -29,7 +29,7 @@ synthesizer = CTABGAN(
     mixed_columns={"capital.loss": [0.0], "capital.gain": [0.0]},
     general_columns=["age"],
     non_categorical_columns=[],
-    integer_columns=["age", "fnlwgt", "capital.gain", "capital.loss", "hours.per.week", "educatioe.num"],
+    integer_columns=["age", "fnlwgt", "capital.gain", "capital.loss", "hours.per.week", "education.num"],
     problem_type={"Classification": "income"},
 )
 
