@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser(description="process dataset")
 parser.add_argument("--dataname", type=str, default=None, help="Name of dataset.")
 args = parser.parse_args()
 
+
 # did not work
 def only_minority_class_in_df(df, target_col, min_class):
     print("target_col:", target_col)
@@ -35,8 +36,6 @@ def only_minority_class_in_df(df, target_col, min_class):
 # reduce majoirty class
 def redeuce_majoirty_class(df, min_class, maj_class, target_col):
     pass
-
-
 
 
 def get_column_name_mapping(
@@ -132,7 +131,6 @@ def process_data(name):
     minority_class = info["minority_class"]
     target_col = info["target_col"]
 
-
     idx_mapping, inverse_idx_mapping, idx_name_mapping = get_column_name_mapping(
         data_df, num_col_idx, cat_col_idx, target_col_idx, column_names
     )
@@ -174,12 +172,11 @@ def process_data(name):
     print(name, train_df.shape, test_df.shape, data_df.shape)
 
     # Filter to only have the minority class in the dataset
-    #train_df = only_minority_class_in_df(train_df, target_col_idx, ">50K")
-    #test_df = only_minority_class_in_df(test_df, target_col_idx, ">50K")
-    #print("train_df before:", train_df)
+    # train_df = only_minority_class_in_df(train_df, target_col_idx, ">50K")
+    # test_df = only_minority_class_in_df(test_df, target_col_idx, ">50K")
+    # print("train_df before:", train_df)
 
     print("balance majority and minoirty class by downsampling majoirity")
-
 
     print("min_class:", minority_class)
     print("maj_class:", majority_class)
@@ -195,7 +192,9 @@ def process_data(name):
 
     majoirty_sampled = majoirty_df.sample(n=minority_size, random_state=42)
 
-    train_df = pd.concat([minority_df, majoirty_sampled]).sample(frac=1, random_state=42)
+    train_df = pd.concat([minority_df, majoirty_sampled]).sample(
+        frac=1, random_state=42
+    )
 
     print(train_df.shape)
     print(train_df[target_col_idx].value_counts())
@@ -266,6 +265,8 @@ def process_data(name):
 
     if not os.path.exists(f"synthetic/{name}"):
         os.makedirs(f"synthetic/{name}")
+
+    print("check value counts of workclass:", train_df["workclass"].value_counts())
 
     train_df.to_csv(f"synthetic/{name}/real.csv", index=False)
     test_df.to_csv(f"synthetic/{name}/test.csv", index=False)
