@@ -172,6 +172,11 @@ def show_sdv_best_reports(results, best_rf_results, mode):
 def train(data_manager, params, seed, output_dir, args):
     # Model parameters
     data = data_manager.model_data
+    print("TRAIN FUNCTION")
+    print(data[0])
+
+    print(data_manager.feat_distributions)
+
     latent_dim = params["latent_dim"]
     hidden_size = params["hidden_size"]
     model_params = {
@@ -308,6 +313,47 @@ def eval_model(data_manager, args, output_dir, model="bgm"):
     save(results, output_dir + model + os.sep + "results.pkl")
 
 
+def main_mod():
+    print("\n\n-------- SYNTHETIC DATA GENERATION - GENERATOR --------")
+    print("Hello from main_mod")
+
+    # Environment configuration
+    args = run_args()
+    task = "generation"
+    create_output_dir(task, args)
+
+    # loop through the datasets
+    # adult is the relevant one
+    for dataset_name in args["datasets"]:
+        print("\n\nDataset: " + Fore.CYAN + dataset_name + Style.RESET_ALL)
+        output_dir = args["output_dir"] + dataset_name + os.sep
+
+        if args["train"]:
+            print("train")
+            # Load and prepare data
+            data_manager, split_list = preprocess_data(dataset_name, args)
+            data_manager.save_input_data_to_csv(output_dir)  # Saved for future use
+            data_manager.generate_mask = False
+            data_manager.split_data(split_list)
+            print("data manager finished")
+
+            # Train
+            print("start train")
+            results = Parallel(n_jobs=args["n_threads"], verbose=10)(
+                delayed(train)(data_manager, params, seed, output_dir, args)
+                for params in args["param_comb"]
+                for seed in range(args["n_seeds"])
+            )
+            print("finisched train")
+
+            # Dictionaries are not correctly updated when parallelization. Therefore, update them after training
+            data_manager.set_results_dictionaries(results, args)
+            if args["gauss"]:
+                data_manager.set_gauss_results_dictionaries(results, args)
+            save(data_manager, output_dir + "data_manager.pkl")
+    print("finished script")
+
+
 def main():
     print("\n\n-------- SYNTHETIC DATA GENERATION - GENERATOR --------")
 
@@ -416,4 +462,4 @@ def main():
 
 # Press the green button in the gutter to run the script.
 if __name__ == "__main__":
-    main()
+    main_mod()

@@ -242,6 +242,7 @@ def sdg_run():
 
         logger.info(f"Accuracy Score: {accuracy_score_value}")
         logger.info(f"F1-Score of minority class: {f1_score_value}")
+        # ROC AUC
         logger.info(f"{classification_report(y_test, y_pred)}")
 
         # add results to dict
