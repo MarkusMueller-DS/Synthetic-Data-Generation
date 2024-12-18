@@ -131,11 +131,15 @@ class DataManager:
         print(df_train)
         print(df_test)
 
+        # create mask
+        train_mask = df_train.notna().astype(int)
+        test_mask = df_test.notna().astype(int)
+
         self.model_data = (
-            df_train.iloc[:, :-1].reset_index(drop=True),
-            df_train.iloc[:, -1].reset_index(drop=True),
-            df_test.iloc[:, :-1].reset_index(drop=True),
-            df_test.iloc[:, -1].reset_index(drop=True),
+            df_train.reset_index(drop=True),
+            train_mask.reset_index(drop=True),
+            df_test.reset_index(drop=True),
+            test_mask.reset_index(drop=True),
         )
 
     def zero_imputation(self, data):
@@ -303,9 +307,11 @@ class DataManager:
                 self.gauss_gen_raw_data[p_name][res[1]] = res[6]
 
     def postprocess_gen_data(self, gen_info):
+        print("Hello from postprocess")
         # Denormalize generated samples to check data ranges
         cov_samples = gen_info["cov_samples"]
         denorm_gen_df = self.transform_data(cov_samples, denorm=True)
+        print(denorm_gen_df)
 
         # Remove negative gaussian samples if the original data didn't have them and convert data types to originals'
         for idx in range(self.columns.size):
@@ -333,7 +339,9 @@ class DataManager:
                     denorm_gen_df.iloc[:, idx] = denorm_gen_df.iloc[:, idx].round()
 
         # set imp_norm_df columns names to denorm_gen_df columns names
-        denorm_gen_df.columns = self.imp_norm_df.columns
+        print(self.imp_norm_df.columns)
+        cols = self.imp_norm_df.columns[:-1]
+        denorm_gen_df.columns = cols
         gen_info["raw_cov_samples"] = denorm_gen_df
         # norm_gen_df = self.transform_data(denorm_gen_df)
         # norm_gen_df.columns = self.imp_norm_df.columns

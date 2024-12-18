@@ -216,8 +216,12 @@ def train(data_manager, params, seed, output_dir, args):
 
     # Obtain and save synthetic samples using TESTING data
     n_gen = data[0].shape[0]
+    # print(n_gen)
+    # print(data_manager)
     model.train_latent_generator(data[0])
+    print("finished train_latent_generator")
     model.generate(n_gen=n_gen)
+    print("finished generate")
     model.validate_samples_range(data_manager, n_gen)
 
     # Save data generated as csv

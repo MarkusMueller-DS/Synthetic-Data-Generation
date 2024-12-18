@@ -119,7 +119,7 @@ def run_args():
     args["lr"] = 1e-3
 
     # Gaussian generation to compare with TVAE
-    args["gauss"] = True
+    args["gauss"] = False
 
     # VAE hyperparameters
     # args["n_threads"] = 15
