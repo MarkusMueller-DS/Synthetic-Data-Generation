@@ -156,7 +156,6 @@ class Generator(VariationalAutoencoder):
         self.sample_space(z, mu_sample, log_var_sample, "gauss")
 
     def validate_samples_range(self, data_manager, n_gen, gauss=False):
-        print("hello from valdiate_samples_range")
         if gauss:
             # Denormalize generated samples to check data ranges
             self.gauss_gen_info = data_manager.postprocess_gen_data(self.gauss_gen_info)
@@ -170,7 +169,6 @@ class Generator(VariationalAutoencoder):
                     self.gauss_gen_info
                 )
         else:
-            print("hello from else")
             # Denormalize generated samples to check data ranges
             self.gen_info = data_manager.postprocess_gen_data(self.gen_info)
 

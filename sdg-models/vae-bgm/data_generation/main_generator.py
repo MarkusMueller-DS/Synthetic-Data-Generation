@@ -172,11 +172,6 @@ def show_sdv_best_reports(results, best_rf_results, mode):
 def train(data_manager, params, seed, output_dir, args):
     # Model parameters
     data = data_manager.model_data
-    print("TRAIN FUNCTION")
-    print(data[0])
-
-    print(data_manager.feat_distributions)
-
     latent_dim = params["latent_dim"]
     hidden_size = params["hidden_size"]
     model_params = {
@@ -219,9 +214,7 @@ def train(data_manager, params, seed, output_dir, args):
     # print(n_gen)
     # print(data_manager)
     model.train_latent_generator(data[0])
-    print("finished train_latent_generator")
     model.generate(n_gen=n_gen)
-    print("finished generate")
     model.validate_samples_range(data_manager, n_gen)
 
     # Save data generated as csv
