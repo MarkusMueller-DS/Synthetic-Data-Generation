@@ -6,7 +6,10 @@ import shutil
 
 DATA_DIR = "data/raw"
 
-NAME_URL_DICT_UCI = {"adult": "https://archive.ics.uci.edu/static/public/2/adult.zip"}
+NAME_URL_DICT_UCI = {
+    # "adult": "https://archive.ics.uci.edu/static/public/2/adult.zip",
+    "cancer": "https://archive.ics.uci.edu/static/public/17/breast+cancer+wisconsin+diagnostic.zip",
+}
 
 
 # Test if data exists and if ther is also processed
