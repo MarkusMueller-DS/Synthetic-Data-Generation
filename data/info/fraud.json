@@ -1,0 +1,7 @@
+{
+    "name": "fraud",
+    "taks_type": "binclass",
+    "target_col": "Class",
+    "minority_class": 1,
+    "majority_class": 0
+}

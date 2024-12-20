@@ -36,6 +36,6 @@
         "fractal_dimension3"
     ],
     "target_col": "Diagnosis",
-    "minority_label": "M",
-    "majority_label": "B"
+    "minority_class": "M",
+    "majority_class": "B"
 }

@@ -163,7 +163,7 @@ cython_debug/
 
 .DS_Store
 
-data/raw/creditcard.csv
+data/raw/cc_fraud/creditcard.csv
 
 envs/
 
