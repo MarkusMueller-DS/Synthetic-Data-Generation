@@ -55,26 +55,27 @@ df_syn = pd.read_csv(syn_path)
 
 metadata = Metadata.detect_from_dataframe(df_real)
 
-# configure column names
-cat_cols = [
-    "workclass",
-    "education",
-    "marital.status",
-    "occupation",
-    "relationship",
-    "race",
-    "sex",
-    "native.country",
-    "income",
-]
-num_cols = [
-    "age",
-    "fnlwgt",
-    "education.num",
-    "capital.gain",
-    "capital.loss",
-    "hours.per.week",
-]
+if DATASET == "adult":
+    # configure column names
+    cat_cols = [
+        "workclass",
+        "education",
+        "marital.status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native.country",
+        "income",
+    ]
+    num_cols = [
+        "age",
+        "fnlwgt",
+        "education.num",
+        "capital.gain",
+        "capital.loss",
+        "hours.per.week",
+    ]
 
 # generate plots for categorical columns
 for col in cat_cols:

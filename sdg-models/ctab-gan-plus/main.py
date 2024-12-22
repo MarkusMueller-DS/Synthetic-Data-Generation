@@ -4,11 +4,26 @@ from model.eval.evaluation import get_utility_metrics, stat_sim, privacy_metrics
 import numpy as np
 import pandas as pd
 import glob
+import argparse
 
+parser = argparse.ArgumentParser(
+    description="Args for synthetic data generation with ctag-gan-plus"
+)
+
+parser.add_argument(
+    "--dataset", type=str, required=True, help="Name of the dataset (e.g., 'adult')"
+)
+
+
+args = parser.parse_args()
 
 num_exp = 1
-dataset = "adult"
-real_path = "Real_Datasets/adult/train.csv"
+dataset = args.dataset
+
+if dataset == "adult":
+    real_path = "Real_Datasets/adult/train.csv"
+else:
+    print("Not implemented")
 fake_file_root = "Fake_Datasets"
 
 synthesizer = CTABGAN(
