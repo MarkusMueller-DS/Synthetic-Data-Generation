@@ -36,6 +36,8 @@ majority_class = info["majority_class"]
 minority_class = info["minority_class"]
 target_col = info["target_col_idx"]
 
+train_df_src = train_df.copy()
+
 minority_df = train_df[train_df[target_col] == minority_class]
 majoirty_df = train_df[train_df[target_col] == majority_class]
 
@@ -46,15 +48,17 @@ train_df = pd.concat([minority_df, majoirty_sampled]).sample(frac=1, random_stat
 print(train_df.shape)
 print(train_df[target_col].value_counts())
 
-cat_col_idx_list = info["cat_col_idx"]
-
 column_names = info["column_names"]
 # add column names to df
 train_df.columns = column_names
+train_df_src.columns = column_names
 test_df.columns = column_names
 
+
+print(train_df_src)
 print(train_df)
 print(test_df)
 
 train_df.to_csv("Real_Datasets/adult/train.csv", index=False)
+train_df_src.to_csv("Real_Datasets/adult/train_src.csv", index=False)
 test_df.to_csv("Real_Datasets/adult/test.csv", index=False)
