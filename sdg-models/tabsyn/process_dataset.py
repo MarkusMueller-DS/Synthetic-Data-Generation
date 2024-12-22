@@ -176,6 +176,8 @@ def process_data(name):
     # test_df = only_minority_class_in_df(test_df, target_col_idx, ">50K")
     # print("train_df before:", train_df)
 
+    train_df_src = train_df.copy()
+
     print("balance majority and minoirty class by downsampling majoirity")
 
     print("min_class:", minority_class)
@@ -230,7 +232,12 @@ def process_data(name):
 
     train_df.rename(columns=idx_name_mapping, inplace=True)
     test_df.rename(columns=idx_name_mapping, inplace=True)
+    train_df_src.rename(columns=idx_name_mapping, inplace=True)
 
+    for col in num_columns:
+        train_df_src.loc[train_df_src[col] == "?", col] = np.nan
+    for col in cat_columns:
+        train_df_src.loc[train_df_src[col] == "?", col] = "nan"
     for col in num_columns:
         train_df.loc[train_df[col] == "?", col] = np.nan
     for col in cat_columns:
@@ -258,9 +265,11 @@ def process_data(name):
     np.save(f"{save_dir}/y_test.npy", y_test)
 
     train_df[num_columns] = train_df[num_columns].astype(np.float32)
+    train_df_src[num_columns] = train_df_src[num_columns].astype(np.float32)
     test_df[num_columns] = test_df[num_columns].astype(np.float32)
 
     train_df.to_csv(f"{save_dir}/train.csv", index=False)
+    train_df_src.to_csv(f"{save_dir}/train_src.csv", index=False)
     test_df.to_csv(f"{save_dir}/test.csv", index=False)
 
     if not os.path.exists(f"synthetic/{name}"):
@@ -269,6 +278,7 @@ def process_data(name):
     print("check value counts of workclass:", train_df["workclass"].value_counts())
 
     train_df.to_csv(f"synthetic/{name}/real.csv", index=False)
+    train_df_src.to_csv(f"synthetic/{name}/real_src.csv", index=False)
     test_df.to_csv(f"synthetic/{name}/test.csv", index=False)
 
     print("Numerical", X_num_train.shape)

@@ -4,13 +4,18 @@ from datetime import datetime
 import pandas as pd
 import argparse
 import json
-import pickle
+import sys
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import classification_report, accuracy_score, f1_score
+from sklearn.metrics import (
+    classification_report,
+    accuracy_score,
+    f1_score,
+    roc_auc_score,
+)
 from sklearn.svm import SVC
 
 from sklearn.preprocessing import OneHotEncoder
@@ -56,7 +61,7 @@ else:
 print(RUN_ID)
 
 # load dataset info JSON
-info_path = f"data/raw/{DATASET}/{DATASET}.json"
+info_path = f"sdg-models/tabsyn/data/info/adult.json"
 if not os.path.exists(info_path):
     raise FileNotFoundError(f"The file does not exists")
 else:
@@ -139,18 +144,22 @@ def apply_onehot_encoding(train_df, test_df, categorical_columns):
 def sdg_run():
     print("sdg-run")
 
-    # Path to data
-    data_path_train = f"data/processed/{DATASET}/train.csv"
-    syn_path_train = f"data/synthetic/{DATASET}/{SDG}.csv"
-    data_path_test = f"data/processed/{DATASET}/test.csv"
+    if SDG == "tabsyn":
+        # Path to data
+        data_path_train = f"sdg-models/tabsyn/synthetic/{DATASET}/real_src.csv"
+        syn_path_train = f"sdg-models/tabsyn/synthetic/{DATASET}/tabsyn.csv"
+        data_path_test = f"sdg-models/tabsyn/synthetic/{DATASET}/test.csv"
 
     # read data
     df_train_ci = pd.read_csv(data_path_train)
     df_train_syn = pd.read_csv(syn_path_train)
     df_test = pd.read_csv(data_path_test)
 
-    # combine syn and train
-    df_train = pd.concat([df_train_ci, df_train_syn])
+    # add synthetic data of minority class to train_ci dataset
+    data_minority = df_train_syn[df_train_syn["income"] == ">50K"]
+    # concat data
+    df_train = pd.concat([df_train_ci, data_minority])
+    print(df_train["income"].value_counts())
 
     target_col_idx = info["target_col_idx"][0]
     target_col_name = info["column_names"][target_col_idx]
@@ -170,10 +179,10 @@ def sdg_run():
     # certain classification models need numbers as the y variable, like XGBoost
     # 1 for minority class and 0 for majority class
     df_train[target_col_name] = df_train[target_col_name].map(
-        {info["maj_class"]: 0, info["min_class"]: 1}
+        {info["majority_class"]: 0, info["minority_class"]: 1}
     )
     df_test[target_col_name] = df_test[target_col_name].map(
-        {info["maj_class"]: 0, info["min_class"]: 1}
+        {info["majority_class"]: 0, info["minority_class"]: 1}
     )
 
     cat_columns_idx = info["cat_col_idx"]
@@ -238,15 +247,18 @@ def sdg_run():
         # calcualte f1_score
         accuracy_score_value = accuracy_score(y_test, y_pred)
         f1_score_value = float(f1_score(list(y_test), list(y_pred), pos_label=1))
+        roc_auc_score_value = float(roc_auc_score(y_test, y_pred))
+
         # log resutls
 
         logger.info(f"Accuracy Score: {accuracy_score_value}")
         logger.info(f"F1-Score of minority class: {f1_score_value}")
+        logger.info(f"ROC AUC score: {roc_auc_score_value}")
         # ROC AUC
         logger.info(f"{classification_report(y_test, y_pred)}")
 
         # add results to dict
-        results[name] = (accuracy_score_value, f1_score_value)
+        results[name] = (accuracy_score_value, f1_score_value, roc_auc_score_value)
 
     logger.info(
         f"Finished training of classifier: {datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -265,18 +277,25 @@ def sdg_run():
                     "SDG": SDG,
                     "LR_accuracy": results["Logistic Regression"][0],
                     "LR_f1-score": results["Logistic Regression"][1],
+                    "LR_roc-auc": results["Logistic Regression"][2],
                     "RF_accuracy": results["Random Forest"][0],
                     "RF_f1-score": results["Random Forest"][1],
+                    "RF_roc_auc": results["Random Forest"][2],
                     "XGB_accuracy": results["XGBoost"][0],
                     "XGB_f1-score": results["XGBoost"][1],
+                    "XGB_roc_auc": results["XGBoost"][2],
                     "Ada_accuracy": results["AdaBoost"][0],
                     "Ada_f1-score": results["AdaBoost"][1],
+                    "Ada_roc_auc": results["AdaBoost"][2],
                     "LGBM_accuracy": results["LightGBM"][0],
                     "LGBM_f1-score": results["LightGBM"][1],
+                    "LGBM_roc_auc": results["LightGBM"][2],
                     "KNN_accuracy": results["KNeighbors"][0],
                     "KNN_f1-score": results["KNeighbors"][1],
+                    "KNN_roc_auc": results["KNeighbors"][2],
                     "SVM_accuracy": results["SVM"][0],
                     "SVM_f1-score": results["SVM"][1],
+                    "SVM_roc_auc": results["SVM"][2],
                 }
             ]
         )
@@ -285,7 +304,7 @@ def sdg_run():
         df_save.to_csv("results/results_df_log.csv")
     else:
         # read pandas and append results
-        df = pd.read_pickle("results/result_df_log.pkl")
+        df = pd.read_pickle("results/results_df_log.pkl")
 
         df_new = pd.DataFrame(
             [
@@ -296,18 +315,25 @@ def sdg_run():
                     "SDG": SDG,
                     "LR_accuracy": results["Logistic Regression"][0],
                     "LR_f1-score": results["Logistic Regression"][1],
+                    "LR_roc-auc": results["Logistic Regression"][2],
                     "RF_accuracy": results["Random Forest"][0],
                     "RF_f1-score": results["Random Forest"][1],
+                    "RF_roc_auc": results["Random Forest"][2],
                     "XGB_accuracy": results["XGBoost"][0],
                     "XGB_f1-score": results["XGBoost"][1],
+                    "XGB_roc_auc": results["XGBoost"][2],
                     "Ada_accuracy": results["AdaBoost"][0],
                     "Ada_f1-score": results["AdaBoost"][1],
+                    "Ada_roc_auc": results["AdaBoost"][2],
                     "LGBM_accuracy": results["LightGBM"][0],
                     "LGBM_f1-score": results["LightGBM"][1],
+                    "LGBM_roc_auc": results["LightGBM"][2],
                     "KNN_accuracy": results["KNeighbors"][0],
                     "KNN_f1-score": results["KNeighbors"][1],
+                    "KNN_roc_auc": results["KNeighbors"][2],
                     "SVM_accuracy": results["SVM"][0],
                     "SVM_f1-score": results["SVM"][1],
+                    "SVM_roc_auc": results["SVM"][2],
                 }
             ]
         )
