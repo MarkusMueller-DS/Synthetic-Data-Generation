@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import argparse
 
 from sdv.metadata import Metadata
 from sdv.evaluation.single_table import get_column_plot
@@ -7,22 +8,43 @@ from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 import matplotlib.pyplot as plt
 
+parser = argparse.ArgumentParser(description="Evaluation plots")
+
+parser.add_argument(
+    "--model", type=str, required=True, help="Name of the model to use (e.g., 'ctgan')"
+)
+
+parser.add_argument(
+    "--dataset", type=str, required=True, help="Name of the dataset (e.g., 'adult')"
+)
+
+args = parser.parse_args()
+
+print(args.model)
+print(args.dataset)
+
 
 # config
-DATASET = "adult"
-SYN_MODEL = "tabsyn"
+DATASET = args.dataset
+SDG = args.model
 
-output_folder_cat = f"results/plots/{DATASET}/{SYN_MODEL}/categorial"
-output_folder_num = f"results/plots/{DATASET}/{SYN_MODEL}/numerical"
-output_folder_tsne = f"results/plots/{DATASET}/{SYN_MODEL}/tsne"
+output_folder_cat = f"results/plots/{DATASET}/{SDG}/categorial"
+output_folder_num = f"results/plots/{DATASET}/{SDG}/numerical"
+output_folder_tsne = f"results/plots/{DATASET}/{SDG}/tsne"
 
 os.makedirs(output_folder_cat, exist_ok=True)
 os.makedirs(output_folder_num, exist_ok=True)
 os.makedirs(output_folder_tsne, exist_ok=True)
 
-# configure paths to data
-real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
-syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
+
+if SDG == "tabsyn":
+    real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
+    syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
+
+if SDG == "ctag-gan-plus":
+    real_path = f"sdg-models/ctag-gan-plus/Real_Datasets/{DATASET}/train.csv"
+    syn_path = f"sdg-models/ctag-gan-plus/Fake_Datasets/{DATASET}/train.csv"
+
 
 df_real = pd.read_csv(real_path)
 df_syn = pd.read_csv(syn_path)

@@ -60,17 +60,6 @@ else:
 
 print(RUN_ID)
 
-# load dataset info JSON
-info_path = f"sdg-models/tabsyn/data/info/adult.json"
-if not os.path.exists(info_path):
-    raise FileNotFoundError(f"The file does not exists")
-else:
-    print("info.json found")
-
-# load info json
-with open(info_path, "r") as f:
-    info = json.load(f)
-
 
 ###
 # logger definition
@@ -103,7 +92,7 @@ logger.info(f"Synthetic Data Generation Algo: {SDG}")
 logger.info(f"Type of Run: {RUN}")
 
 
-def impute_missing_values(df):
+def impute_missing_values(df, info):
     # Category: repalce nan with "missing"
     cat_columns_idx = info["cat_col_idx"]
     columns_names = info["column_names"]
@@ -146,27 +135,59 @@ def sdg_run():
 
     if SDG == "tabsyn":
         # Path to data
-        data_path_train = f"sdg-models/tabsyn/synthetic/{DATASET}/real_src.csv"
-        syn_path_train = f"sdg-models/tabsyn/synthetic/{DATASET}/tabsyn.csv"
+        data_path_src = f"sdg-models/tabsyn/synthetic/{DATASET}/real_src.csv"
+        syn_path = f"sdg-models/tabsyn/synthetic/{DATASET}/tabsyn.csv"
         data_path_test = f"sdg-models/tabsyn/synthetic/{DATASET}/test.csv"
 
+        # load dataset info JSON
+        info_path = f"sdg-models/tabsyn/data/info/adult.json"
+        if not os.path.exists(info_path):
+            raise FileNotFoundError(f"The file does not exists")
+        else:
+            print("info.json found")
+
+        # load info json
+        with open(info_path, "r") as f:
+            info = json.load(f)
+
+    if SDG == "ctab-gan-plus":
+        data_path_src = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train_src.csv"
+        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/Adult/Adult_fake_0.csv"
+        data_path_test = "sdg-models/ctab-gan-plus/Real_Datasets/adult/test.csv"
+
+        # load dataset info JSON
+        info_path = f"sdg-models/ctag-gan-plus/Real_Datasets/info/adult.json"
+        if not os.path.exists(info_path):
+            raise FileNotFoundError(f"The file does not exists")
+        else:
+            print("info.json found")
+
+        # load info json
+        with open(info_path, "r") as f:
+            info = json.load(f)
+
     # read data
-    df_train_ci = pd.read_csv(data_path_train)
-    df_train_syn = pd.read_csv(syn_path_train)
+    df_train_ci = pd.read_csv(data_path_src)
+    df_syn = pd.read_csv(syn_path)
     df_test = pd.read_csv(data_path_test)
 
+    # if isinstance(info["target_col_idx"], list):
+    #    target_col_idx = info["target_col_idx"][0]
+    # elif isinstance(info["target_col_idx"], int):
+    #    target_col_idx = info["target_col_idx"]
+    # else:
+    #    print("Unexpected type for 'target_col_idx'")
+
+    target_col = info["target_col"]
+    minority_class = info["minority_class"]
+
     # add synthetic data of minority class to train_ci dataset
-    data_minority = df_train_syn[df_train_syn["income"] == ">50K"]
+    data_minority = df_syn[df_syn[target_col] == minority_class]
     # concat data
     df_train = pd.concat([df_train_ci, data_minority])
-    print(df_train["income"].value_counts())
+    print(df_train[target_col].value_counts())
 
-    target_col_idx = info["target_col_idx"][0]
-    target_col_name = info["column_names"][target_col_idx]
-    print("Traget column:", target_col_idx)
-    print("Target column name:", target_col_name)
-
-    counts = df_train[target_col_name].value_counts()
+    counts = df_train[target_col].value_counts()
 
     # log dataset infos
     logger.info("-" * 50)
@@ -178,10 +199,10 @@ def sdg_run():
     # pre process
     # certain classification models need numbers as the y variable, like XGBoost
     # 1 for minority class and 0 for majority class
-    df_train[target_col_name] = df_train[target_col_name].map(
+    df_train[target_col] = df_train[target_col].map(
         {info["majority_class"]: 0, info["minority_class"]: 1}
     )
-    df_test[target_col_name] = df_test[target_col_name].map(
+    df_test[target_col] = df_test[target_col].map(
         {info["majority_class"]: 0, info["minority_class"]: 1}
     )
 
@@ -190,8 +211,8 @@ def sdg_run():
     cat_columns_names = [columns_names[i] for i in cat_columns_idx]
 
     # impute misisng values
-    df_train = impute_missing_values(df_train)
-    df_test = impute_missing_values(df_test)
+    df_train = impute_missing_values(df_train, info)
+    df_test = impute_missing_values(df_test, info)
 
     # on hot encode categorical data
     df_train, df_test = apply_onehot_encoding(df_train, df_test, cat_columns_names)
@@ -200,11 +221,11 @@ def sdg_run():
     print("NaNs in df_test:", df_test.isnull().values.any())
 
     # split data
-    X_train = df_train.drop(columns=[f"remainder__{target_col_name}"])
-    y_train = df_train[f"remainder__{target_col_name}"]
+    X_train = df_train.drop(columns=[f"remainder__{target_col}"])
+    y_train = df_train[f"remainder__{target_col}"]
 
-    X_test = df_test.drop(columns=[f"remainder__{target_col_name}"])
-    y_test = df_test[f"remainder__{target_col_name}"]
+    X_test = df_test.drop(columns=[f"remainder__{target_col}"])
+    y_test = df_test[f"remainder__{target_col}"]
 
     logger.info("-" * 50)
     logger.info("Shape of train and test data")

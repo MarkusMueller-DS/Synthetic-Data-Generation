@@ -7,8 +7,8 @@ import glob
 
 
 num_exp = 1
-dataset = "Adult"
-real_path = "Real_Datasets/test.csv"
+dataset = "adult"
+real_path = "Real_Datasets/adult/train.csv"
 fake_file_root = "Fake_Datasets"
 
 synthesizer = CTABGAN(
