@@ -53,8 +53,19 @@ smote_nc = SMOTENC(categorical_features=cat_features, random_state=42)
 X_resampled, y_resampled = smote_nc.fit_resample(X, y)
 print("SMOTE finished")
 
+# Combine X_resampled and y_resampled into a single DataFrame
+data_resampled = X_resampled.copy()
+data_resampled["income"] = y_resampled
 
-# combine X and y
-X["income"] = y
+# Indenify synthetic rows
+original_indices = X.index
+resampled_indices = X_resampled.index
+synthetic_indices = resampled_indices.difference(original_indices)
 
-X.to_csv("data/synthetic/final_data.csv", index=False)
+# Filter synthetic rows
+synthetic_samples = data_resampled.loc[synthetic_indices]
+
+print(synthetic_samples)
+print(synthetic_samples["income"].value_counts())
+
+synthetic_samples.to_csv("data/synthetic/adult/syn_data.csv", index=False)

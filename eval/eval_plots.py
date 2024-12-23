@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import argparse
+import sys
 
 from sdv.metadata import Metadata
 from sdv.evaluation.single_table import get_column_plot
@@ -36,18 +37,31 @@ os.makedirs(output_folder_cat, exist_ok=True)
 os.makedirs(output_folder_num, exist_ok=True)
 os.makedirs(output_folder_tsne, exist_ok=True)
 
-
-if SDG == "tabsyn":
-    real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
-    syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
-
-if SDG == "ctab-gan-plus":
-    real_path = f"sdg-models/ctab-gan-plus/Real_Datasets/{DATASET}/train.csv"
-    syn_path = f"sdg-models/ctab-gan-plus/Fake_Datasets/{DATASET}/adult_fake_0.csv"
+if DATASET == "adult":
+    if SDG == "tabsyn":
+        real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
+        syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
+    elif SDG == "ctab-gan-plus":
+        real_path = f"sdg-models/ctab-gan-plus/Real_Datasets/{DATASET}/train.csv"
+        syn_path = f"sdg-models/ctab-gan-plus/Fake_Datasets/{DATASET}/adult_fake_0.csv"
+    elif SDG == "smote":
+        real_path = "sdg-models/smote/data/processed/adult/train.csv"
+        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
+    else:
+        print(f"{SDG} not implemented")
+        sys.exit(1)
+else:
+    print(f"{DATASET} not implemented")
+    sys.exit(1)
 
 
 df_real = pd.read_csv(real_path)
 df_syn = pd.read_csv(syn_path)
+
+# SMOTE only generates samples of the minority class so filter train.csv to minoirty class
+if SDG == "smote":
+    df_real = df_real[df_real["income"] == ">50K"]
+
 
 # load info json
 # with open("../sdg-models/tabsyn/data/info/adult.json", "r") as f:
@@ -108,6 +122,7 @@ if df_syn.shape[0] > df_real.shape[0]:
     labels = ["Real"] * len(df_real) + ["Generated"] * len(df_syn)
 
     # apply label enoding
+    # fix
     label_encoders = {}
     for col in combined_df.select_dtypes(include=["object", "category"]).columns:
         le = LabelEncoder()

@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import argparse
 import json
+import sys
 
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
@@ -147,8 +148,7 @@ def sdg_run():
         # load info json
         with open(info_path, "r") as f:
             info = json.load(f)
-
-    if SDG == "ctab-gan-plus":
+    elif SDG == "ctab-gan-plus":
         data_path_src = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train_src.csv"
         syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
         data_path_test = "sdg-models/ctab-gan-plus/Real_Datasets/adult/test.csv"
@@ -163,18 +163,29 @@ def sdg_run():
         # load info json
         with open(info_path, "r") as f:
             info = json.load(f)
+    elif SDG == "smote":
+        data_path_src = "sdg-models/smote/data/processed/adult/train.csv"
+        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
+        data_path_test = "sdg-models/smote/data/processed/adult/test.csv"
+
+        # load dataset info JSON
+        info_path = f"sdg-models/smote/data/info/adult.json"
+        if not os.path.exists(info_path):
+            raise FileNotFoundError(f"The file does not exists")
+        else:
+            print("info.json found")
+
+        # load info json
+        with open(info_path, "r") as f:
+            info = json.load(f)
+    else:
+        print(f"{SDG} not implemented")
+        sys.exit(1)
 
     # read data
     df_train_ci = pd.read_csv(data_path_src)
     df_syn = pd.read_csv(syn_path)
     df_test = pd.read_csv(data_path_test)
-
-    # if isinstance(info["target_col_idx"], list):
-    #    target_col_idx = info["target_col_idx"][0]
-    # elif isinstance(info["target_col_idx"], int):
-    #    target_col_idx = info["target_col_idx"]
-    # else:
-    #    print("Unexpected type for 'target_col_idx'")
 
     target_col = info["target_col"]
     minority_class = info["minority_class"]

@@ -3,6 +3,7 @@ import numpy as np
 import json
 import os
 import argparse
+import sys
 
 from dython.nominal import compute_associations
 from scipy.spatial import distance
@@ -37,18 +38,32 @@ with open("sdg-models/tabsyn/data/info/adult.json", "r") as f:
 DATASET = args.dataset
 SDG = args.model
 
-if SDG == "tabsyn":
-    real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
-    syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
-elif SDG == "ctab-gan-plus":
-    real_path = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train.csv"
-    syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
+if DATASET == "adult":
+    if SDG == "tabsyn":
+        real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
+        syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
+    elif SDG == "ctab-gan-plus":
+        real_path = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train.csv"
+        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
+    elif SDG == "smote":
+        real_path = "sdg-models/smote/data/processed/adult/train.csv"
+        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
+    else:
+        print(f"{SDG} not implemented")
+        sys.exit(1)
 else:
-    print(f"{SDG} not implemented")
+    print(f"{DATASET} not implemented")
+    sys.exit(1)
 
 
 df_real = pd.read_csv(real_path)
 df_syn = pd.read_csv(syn_path)
+
+# SMOTE only generates samples of the minority class so filter train.csv to minoirty class
+if SDG == "smote":
+    df_real = df_real[df_real["income"] == ">50K"]
+
+print(df_real["income"].value_counts())
 
 if DATASET == "adult":
     cat_cols = [
