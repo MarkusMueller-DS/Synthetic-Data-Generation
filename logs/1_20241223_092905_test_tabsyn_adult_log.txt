@@ -1,0 +1,125 @@
+INFO: --------------------------------------------------
+INFO: Timestamp: 20241223_092905
+INFO: Dataset: adult
+INFO: Synthetic Data Generation Algo: tabsyn
+INFO: Type of Run: test
+INFO: --------------------------------------------------
+INFO: Dataset infos
+INFO: income
+>50K     25100
+<=50K    24720
+Name: count, dtype: int64
+INFO: Shape df_train: (49820, 15)
+INFO: Shape df_test: (16281, 15)
+INFO: --------------------------------------------------
+INFO: Shape of train and test data
+INFO: Timestamp: 20241223_092906
+INFO: X_train: (49820, 108)
+INFO: y_train: (49820,)
+INFO: X_test: (16281, 108)
+INFO: y_test: (16281,)
+INFO: --------------------------------------------------
+INFO: Stating training of classifier: 20241223_092906
+INFO: Classification Models:
+INFO: Logistic Regression: {'C': 1.0, 'class_weight': None, 'dual': False, 'fit_intercept': True, 'intercept_scaling': 1, 'l1_ratio': None, 'max_iter': 100, 'multi_class': 'deprecated', 'n_jobs': None, 'penalty': 'l2', 'random_state': 42, 'solver': 'lbfgs', 'tol': 0.0001, 'verbose': 0, 'warm_start': False}
+INFO: Random Forest: {'bootstrap': True, 'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': None, 'max_features': 'sqrt', 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'monotonic_cst': None, 'n_estimators': 100, 'n_jobs': None, 'oob_score': False, 'random_state': 42, 'verbose': 0, 'warm_start': False}
+INFO: XGBoost: {'objective': 'binary:logistic', 'base_score': None, 'booster': None, 'callbacks': None, 'colsample_bylevel': None, 'colsample_bynode': None, 'colsample_bytree': None, 'device': None, 'early_stopping_rounds': None, 'enable_categorical': False, 'eval_metric': None, 'feature_types': None, 'gamma': None, 'grow_policy': None, 'importance_type': None, 'interaction_constraints': None, 'learning_rate': None, 'max_bin': None, 'max_cat_threshold': None, 'max_cat_to_onehot': None, 'max_delta_step': None, 'max_depth': None, 'max_leaves': None, 'min_child_weight': None, 'missing': nan, 'monotone_constraints': None, 'multi_strategy': None, 'n_estimators': None, 'n_jobs': None, 'num_parallel_tree': None, 'random_state': 42, 'reg_alpha': None, 'reg_lambda': None, 'sampling_method': None, 'scale_pos_weight': None, 'subsample': None, 'tree_method': None, 'validate_parameters': None, 'verbosity': None}
+INFO: AdaBoost: {'algorithm': 'SAMME', 'estimator': None, 'learning_rate': 1.0, 'n_estimators': 50, 'random_state': 42}
+INFO: LightGBM: {'boosting_type': 'gbdt', 'class_weight': None, 'colsample_bytree': 1.0, 'importance_type': 'split', 'learning_rate': 0.1, 'max_depth': -1, 'min_child_samples': 20, 'min_child_weight': 0.001, 'min_split_gain': 0.0, 'n_estimators': 100, 'n_jobs': None, 'num_leaves': 31, 'objective': None, 'random_state': 42, 'reg_alpha': 0.0, 'reg_lambda': 0.0, 'subsample': 1.0, 'subsample_for_bin': 200000, 'subsample_freq': 0}
+INFO: KNeighbors: {'algorithm': 'auto', 'leaf_size': 30, 'metric': 'minkowski', 'metric_params': None, 'n_jobs': None, 'n_neighbors': 5, 'p': 2, 'weights': 'uniform'}
+INFO: SVM: {'C': 1.0, 'break_ties': False, 'cache_size': 200, 'class_weight': None, 'coef0': 0.0, 'decision_function_shape': 'ovr', 'degree': 3, 'gamma': 'scale', 'kernel': 'rbf', 'max_iter': -1, 'probability': False, 'random_state': 42, 'shrinking': True, 'tol': 0.001, 'verbose': False}
+INFO: Results for Logistic Regression
+INFO: Accuracy Score: 0.7296849087893864
+INFO: F1-Score of minority class: 0.44953095684803
+INFO: ROC AUC score: 0.639047571553043
+INFO:               precision    recall  f1-score   support
+
+         0.0       0.83      0.81      0.82     12435
+         1.0       0.43      0.47      0.45      3846
+
+    accuracy                           0.73     16281
+   macro avg       0.63      0.64      0.64     16281
+weighted avg       0.74      0.73      0.73     16281
+
+INFO: Results for Random Forest
+INFO: Accuracy Score: 0.8113138013635526
+INFO: F1-Score of minority class: 0.6729131175468483
+INFO: ROC AUC score: 0.8148775504699319
+INFO:               precision    recall  f1-score   support
+
+         0.0       0.94      0.81      0.87     12435
+         1.0       0.57      0.82      0.67      3846
+
+    accuracy                           0.81     16281
+   macro avg       0.75      0.81      0.77     16281
+weighted avg       0.85      0.81      0.82     16281
+
+INFO: Results for XGBoost
+INFO: Accuracy Score: 0.8282660770222959
+INFO: F1-Score of minority class: 0.7020460358056266
+INFO: ROC AUC score: 0.8380079376878331
+INFO:               precision    recall  f1-score   support
+
+         0.0       0.95      0.82      0.88     12435
+         1.0       0.59      0.86      0.70      3846
+
+    accuracy                           0.83     16281
+   macro avg       0.77      0.84      0.79     16281
+weighted avg       0.87      0.83      0.84     16281
+
+INFO: Results for AdaBoost
+INFO: Accuracy Score: 0.8076899453350531
+INFO: F1-Score of minority class: 0.6773162939297125
+INFO: ROC AUC score: 0.823819524554203
+INFO:               precision    recall  f1-score   support
+
+         0.0       0.95      0.79      0.86     12435
+         1.0       0.56      0.85      0.68      3846
+
+    accuracy                           0.81     16281
+   macro avg       0.75      0.82      0.77     16281
+weighted avg       0.86      0.81      0.82     16281
+
+INFO: Results for LightGBM
+INFO: Accuracy Score: 0.8293102389288127
+INFO: F1-Score of minority class: 0.704895401932675
+INFO: ROC AUC score: 0.8409363949950036
+INFO:               precision    recall  f1-score   support
+
+         0.0       0.95      0.82      0.88     12435
+         1.0       0.60      0.86      0.70      3846
+
+    accuracy                           0.83     16281
+   macro avg       0.77      0.84      0.79     16281
+weighted avg       0.87      0.83      0.84     16281
+
+INFO: Results for KNeighbors
+INFO: Accuracy Score: 0.6315336895768073
+INFO: F1-Score of minority class: 0.43293316948671895
+INFO: ROC AUC score: 0.6190629338080641
+INFO:               precision    recall  f1-score   support
+
+         0.0       0.84      0.64      0.73     12435
+         1.0       0.34      0.60      0.43      3846
+
+    accuracy                           0.63     16281
+   macro avg       0.59      0.62      0.58     16281
+weighted avg       0.72      0.63      0.66     16281
+
+INFO: Results for SVM
+INFO: Accuracy Score: 0.7995209139487747
+INFO: F1-Score of minority class: 0.3151489718841796
+INFO: ROC AUC score: 0.5908385696103358
+INFO:               precision    recall  f1-score   support
+
+         0.0       0.80      0.99      0.88     12435
+         1.0       0.82      0.20      0.32      3846
+
+    accuracy                           0.80     16281
+   macro avg       0.81      0.59      0.60     16281
+weighted avg       0.80      0.80      0.75     16281
+
+INFO: Finished training of classifier: 20241223_093222
+INFO: --------------------------------------------------
+INFO: Saving results...
+INFO: Results saved

@@ -31,8 +31,8 @@
     "target_col_idx": 14,
     "target_col": "income",
     "file_type": "csv",
-    "data_path": "Real_Datasets/adult/adult.data",
-    "test_path": "Real_Datasets/adult/adult.test",
+    "data_path": "data/raw/adult/adult.data",
+    "test_path": "data/raw/adult/adult.test",
     "majority_class": "<=50K",
     "minority_class": ">50K"
 }

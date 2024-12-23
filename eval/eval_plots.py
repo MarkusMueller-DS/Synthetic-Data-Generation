@@ -41,9 +41,9 @@ if SDG == "tabsyn":
     real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
     syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
 
-if SDG == "ctag-gan-plus":
-    real_path = f"sdg-models/ctag-gan-plus/Real_Datasets/{DATASET}/train.csv"
-    syn_path = f"sdg-models/ctag-gan-plus/Fake_Datasets/{DATASET}/train.csv"
+if SDG == "ctab-gan-plus":
+    real_path = f"sdg-models/ctab-gan-plus/Real_Datasets/{DATASET}/train.csv"
+    syn_path = f"sdg-models/ctab-gan-plus/Fake_Datasets/{DATASET}/adult_fake_0.csv"
 
 
 df_real = pd.read_csv(real_path)
@@ -91,7 +91,7 @@ for col in num_cols:
     fig_num = get_column_plot(
         real_data=df_real, synthetic_data=df_syn, metadata=metadata, column_name=col
     )
-    fig_cat.write_image(f"{output_folder_num}/{col}.png")
+    fig_num.write_image(f"{output_folder_num}/{col}.png")
     # fig_num.show()
 
 ####

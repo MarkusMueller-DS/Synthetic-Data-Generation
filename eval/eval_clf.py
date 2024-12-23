@@ -4,9 +4,7 @@ from datetime import datetime
 import pandas as pd
 import argparse
 import json
-import sys
 
-from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
@@ -25,7 +23,7 @@ from xgboost import XGBClassifier
 import lightgbm as lgb
 
 
-parser = argparse.ArgumentParser(description="Evaulation Classifier")
+parser = argparse.ArgumentParser(description="Evaluation Classifier")
 
 parser.add_argument(
     "--model", type=str, required=True, help="Name of the model to use (e.g., 'ctgan')"
@@ -152,11 +150,11 @@ def sdg_run():
 
     if SDG == "ctab-gan-plus":
         data_path_src = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train_src.csv"
-        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/Adult/Adult_fake_0.csv"
+        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
         data_path_test = "sdg-models/ctab-gan-plus/Real_Datasets/adult/test.csv"
 
         # load dataset info JSON
-        info_path = f"sdg-models/ctag-gan-plus/Real_Datasets/info/adult.json"
+        info_path = f"sdg-models/ctab-gan-plus/Real_Datasets/info/adult.json"
         if not os.path.exists(info_path):
             raise FileNotFoundError(f"The file does not exists")
         else:
@@ -271,7 +269,6 @@ def sdg_run():
         roc_auc_score_value = float(roc_auc_score(y_test, y_pred))
 
         # log resutls
-
         logger.info(f"Accuracy Score: {accuracy_score_value}")
         logger.info(f"F1-Score of minority class: {f1_score_value}")
         logger.info(f"ROC AUC score: {roc_auc_score_value}")
@@ -296,6 +293,7 @@ def sdg_run():
                     "Timestamp": TS,
                     "RUN": RUN,
                     "SDG": SDG,
+                    "Dataset": DATASET,
                     "LR_accuracy": results["Logistic Regression"][0],
                     "LR_f1-score": results["Logistic Regression"][1],
                     "LR_roc-auc": results["Logistic Regression"][2],
@@ -322,7 +320,7 @@ def sdg_run():
         )
 
         df_save.to_pickle("results/results_df_log.pkl")
-        df_save.to_csv("results/results_df_log.csv")
+        df_save.to_csv("results/results_df_log.csv", index=False)
     else:
         # read pandas and append results
         df = pd.read_pickle("results/results_df_log.pkl")
@@ -334,6 +332,7 @@ def sdg_run():
                     "Timestamp": TS,
                     "RUN": RUN,
                     "SDG": SDG,
+                    "Dataset": DATASET,
                     "LR_accuracy": results["Logistic Regression"][0],
                     "LR_f1-score": results["Logistic Regression"][1],
                     "LR_roc-auc": results["Logistic Regression"][2],
@@ -361,7 +360,7 @@ def sdg_run():
 
         df_save = pd.concat([df, df_new])
         df_save.to_pickle("results/results_df_log.pkl")
-        df_save.to_csv("results/results_df_log.csv")
+        df_save.to_csv("results/results_df_log.csv", index=False)
 
     logger.info("Results saved")
 

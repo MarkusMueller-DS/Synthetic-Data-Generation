@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import json
 import os
+import argparse
 
 from dython.nominal import compute_associations
 from scipy.spatial import distance
@@ -13,38 +14,58 @@ from datetime import datetime
 # from synthcity.plugins.core.dataloader import GenericDataLoader
 # from sklearn.preprocessing import OneHotEncoder
 
-### Config
+parser = argparse.ArgumentParser(description="Evaluation plots")
+
+parser.add_argument(
+    "--model", type=str, required=True, help="Name of the model to use (e.g., 'ctgan')"
+)
+
+parser.add_argument(
+    "--dataset", type=str, required=True, help="Name of the dataset (e.g., 'adult')"
+)
+
+args = parser.parse_args()
+
+print(args.model)
+print(args.dataset)
+
 
 # load info json
 with open("sdg-models/tabsyn/data/info/adult.json", "r") as f:
     info = json.load(f)
 
-dataname = "adult"
-model = "tabsyn"
+DATASET = args.dataset
+SDG = args.model
 
-real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
-syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
-
-###
+if SDG == "tabsyn":
+    real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
+    syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
+elif SDG == "ctab-gan-plus":
+    real_path = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train.csv"
+    syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
+else:
+    print(f"{SDG} not implemented")
 
 
 df_real = pd.read_csv(real_path)
 df_syn = pd.read_csv(syn_path)
 
+if DATASET == "adult":
+    cat_cols = [
+        "workclass",
+        "education",
+        "marital.status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native.country",
+        "income",
+    ]
+else:
+    print(f"{DATASET} not implemented")
 
 # NaNs are read as float this breaks the code will transfrom to 'missing' for categoricalo columns
-cat_cols = adult_categorical = [
-    "workclass",
-    "education",
-    "marital.status",
-    "occupation",
-    "relationship",
-    "race",
-    "sex",
-    "native.country",
-    "income",
-]
-
 for col in cat_cols:
     df_real[col] = df_real[col].replace(0.0, "missing")
     df_syn[col] = df_syn[col].replace(0.0, "missing")
@@ -132,8 +153,8 @@ ts = datetime.now().strftime("%Y%m%d_%H%M%S")
 new_data = [
     {
         "Timestamp": ts,
-        "Syn_Algo": model,
-        "Dataset": dataname,
+        "Syn_Algo": SDG,
+        "Dataset": DATASET,
         "Average WD (Continuous Columns)": np.mean(num_stat),
         "Average JSD (Categorical Columns)": np.mean(cat_stat),
         "Correlation Distance": corr_dist,
@@ -143,7 +164,7 @@ new_data = [
 df_new = pd.DataFrame(new_data)
 
 df_new = pd.concat([df_old, df_new])
-df_new.to_csv("results/quality_data.csv")
+df_new.to_csv("results/quality_data.csv", index=False)
 
 print(df_new)
 

@@ -1,3 +1,4 @@
-,Timestamp,Syn_Algo,Dataset,Average WD (Continuous Columns),Average JSD (Categorical Columns),Correlation Distance
-0,20241222_111131,init,init,0.0,0.0,0.0
-0,20241222_111131,tabsyn,adult,0.0033175091870942396,0.0249583925375431,0.41185116731687493
+Timestamp,Syn_Algo,Dataset,Average WD (Continuous Columns),Average JSD (Categorical Columns),Correlation Distance
+20241223_091706,init,init,0.0,0.0,0.0
+20241223_091706,tabsyn,adult,0.0033175091870942,0.0249583925375431,0.4118511673168749
+20241223_091716,ctab-gan-plus,adult,0.006452621376186096,0.05932691494535526,0.5331950991341352

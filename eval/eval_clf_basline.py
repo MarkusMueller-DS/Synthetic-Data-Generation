@@ -4,13 +4,16 @@ from datetime import datetime
 import pandas as pd
 import argparse
 import json
-import pickle
 
-from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import classification_report, accuracy_score, f1_score
+from sklearn.metrics import (
+    classification_report,
+    accuracy_score,
+    f1_score,
+    roc_auc_score,
+)
 from sklearn.svm import SVC
 
 from sklearn.preprocessing import OneHotEncoder
@@ -19,7 +22,7 @@ from sklearn.compose import ColumnTransformer
 from xgboost import XGBClassifier
 import lightgbm as lgb
 
-parser = argparse.ArgumentParser(description="Evaulation Classifier")
+parser = argparse.ArgumentParser(description="Evaluation Classifier")
 
 parser.add_argument(
     "--dataset", type=str, required=True, help="Name of the dataset (e.g., 'adult')"
@@ -226,14 +229,15 @@ def baseline_run():
         # calcualte f1_score
         accuracy_score_value = accuracy_score(y_test, y_pred)
         f1_score_value = float(f1_score(list(y_test), list(y_pred), pos_label=1))
-        # log resutls
+        roc_auc_score_value = float(roc_auc_score(y_test, y_pred))
 
+        # log results
         logger.info(f"Accuracy Score: {accuracy_score_value}")
         logger.info(f"F1-Score of minority class: {f1_score_value}")
         logger.info(f"{classification_report(y_test, y_pred)}")
 
         # add results to dict
-        results[name] = (accuracy_score_value, f1_score_value)
+        results[name] = (accuracy_score_value, f1_score_value, roc_auc_score_value)
 
     logger.info(
         f"Finished training of classifier: {datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -250,26 +254,34 @@ def baseline_run():
                     "Timestamp": TS,
                     "RUN": RUN,
                     "SDG": SDG,
+                    "Dataset": DATASET,
                     "LR_accuracy": results["Logistic Regression"][0],
                     "LR_f1-score": results["Logistic Regression"][1],
+                    "LR_roc-auc": results["Logistic Regression"][2],
                     "RF_accuracy": results["Random Forest"][0],
                     "RF_f1-score": results["Random Forest"][1],
+                    "RF_roc_auc": results["Random Forest"][2],
                     "XGB_accuracy": results["XGBoost"][0],
                     "XGB_f1-score": results["XGBoost"][1],
+                    "XGB_roc_auc": results["XGBoost"][2],
                     "Ada_accuracy": results["AdaBoost"][0],
                     "Ada_f1-score": results["AdaBoost"][1],
+                    "Ada_roc_auc": results["AdaBoost"][2],
                     "LGBM_accuracy": results["LightGBM"][0],
                     "LGBM_f1-score": results["LightGBM"][1],
+                    "LGBM_roc_auc": results["LightGBM"][2],
                     "KNN_accuracy": results["KNeighbors"][0],
                     "KNN_f1-score": results["KNeighbors"][1],
+                    "KNN_roc_auc": results["KNeighbors"][2],
                     "SVM_accuracy": results["SVM"][0],
                     "SVM_f1-score": results["SVM"][1],
+                    "SVM_roc_auc": results["SVM"][2],
                 }
             ]
         )
 
         df_save.to_pickle("results/results_df_log.pkl")
-        df_save.to_csv("results/results_df_log.csv")
+        df_save.to_csv("results/results_df_log.csv", index=False)
     else:
         # read pandas and append results
         df = pd.read_pickle("results/results_df_log.pkl")
@@ -281,27 +293,35 @@ def baseline_run():
                     "Timestamp": TS,
                     "RUN": RUN,
                     "SDG": SDG,
+                    "Dataset": DATASET,
                     "LR_accuracy": results["Logistic Regression"][0],
                     "LR_f1-score": results["Logistic Regression"][1],
+                    "LR_roc-auc": results["Logistic Regression"][2],
                     "RF_accuracy": results["Random Forest"][0],
                     "RF_f1-score": results["Random Forest"][1],
+                    "RF_roc_auc": results["Random Forest"][2],
                     "XGB_accuracy": results["XGBoost"][0],
                     "XGB_f1-score": results["XGBoost"][1],
+                    "XGB_roc_auc": results["XGBoost"][2],
                     "Ada_accuracy": results["AdaBoost"][0],
                     "Ada_f1-score": results["AdaBoost"][1],
+                    "Ada_roc_auc": results["AdaBoost"][2],
                     "LGBM_accuracy": results["LightGBM"][0],
                     "LGBM_f1-score": results["LightGBM"][1],
+                    "LGBM_roc_auc": results["LightGBM"][2],
                     "KNN_accuracy": results["KNeighbors"][0],
                     "KNN_f1-score": results["KNeighbors"][1],
+                    "KNN_roc_auc": results["KNeighbors"][2],
                     "SVM_accuracy": results["SVM"][0],
                     "SVM_f1-score": results["SVM"][1],
+                    "SVM_roc_auc": results["SVM"][2],
                 }
             ]
         )
 
         df_save = pd.concat([df, df_new])
         df_save.to_pickle("results/results_df_log.pkl")
-        df_save.to_csv("results/results_df_log.csv")
+        df_save.to_csv("results/results_df_log.csv", index=False)
 
     logger.info("Results saved")
 

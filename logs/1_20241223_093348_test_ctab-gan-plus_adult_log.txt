@@ -1,0 +1,5 @@
+INFO: --------------------------------------------------
+INFO: Timestamp: 20241223_093348
+INFO: Dataset: adult
+INFO: Synthetic Data Generation Algo: ctab-gan-plus
+INFO: Type of Run: test
