@@ -2,6 +2,7 @@ import os
 import zipfile
 from urllib import request
 import shutil
+import argparse
 
 
 DATA_DIR = "data/raw"
@@ -9,7 +10,16 @@ DATA_DIR = "data/raw"
 NAME_URL_DICT_UCI = {
     # "adult": "https://archive.ics.uci.edu/static/public/2/adult.zip",
     "cancer": "https://archive.ics.uci.edu/static/public/17/breast+cancer+wisconsin+diagnostic.zip",
+    "yeast": "https://archive.ics.uci.edu/static/public/110/yeast.zip",
 }
+
+parser = argparse.ArgumentParser(description="download dataset")
+
+# General configs
+parser.add_argument("--dataset", type=str, default=None, help="Name of dataset.")
+args = parser.parse_args()
+
+print(args.dataset)
 
 
 # Test if data exists and if ther is also processed
@@ -46,6 +56,10 @@ def download_from_uci(name):
 
 
 if __name__ == "__main__":
-    for name in NAME_URL_DICT_UCI.keys():
-        delete_files(name)
-        download_from_uci(name)
+    if args.dataset == None:
+        for name in NAME_URL_DICT_UCI.keys():
+            delete_files(name)
+            download_from_uci(name)
+    if args.dataset in ["yeast", "adult"]:
+        delete_files(args.dataset)
+        download_from_uci(args.dataset)

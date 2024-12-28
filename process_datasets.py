@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import argparse
 import shutil
+from sklearn.model_selection import train_test_split
 
 
 parser = argparse.ArgumentParser(description="process dataset")
@@ -11,164 +12,80 @@ parser = argparse.ArgumentParser(description="process dataset")
 parser.add_argument("--dataset", type=str, default=None, help="Name of dataset")
 args = parser.parse_args()
 
+INFO_PATH = "data/info"
 
-def process_adult():
-    print("Processing adult dataset")
 
-    print("Check if info.json is present in folder")
-    INFO_PATH = "data/info/adult.json"
-    print("info_path:", INFO_PATH)
-    if not os.path.exists(INFO_PATH):
-        raise FileNotFoundError(f"The file does not exists")
-    else:
-        print("info.json found")
+def process_yeast():
+    # no missing values
+    # only numerical columns
+    # remove first column from dataset
+    # split data
 
-    # load info json
-    with open(INFO_PATH, "r") as f:
+    # create folder structure
+    os.makedirs("data/processed/yeast", exist_ok=True)
+    os.makedirs("data/synthetic/yeast", exist_ok=True)
+
+    # read info json
+    with open(f"{INFO_PATH}/yeast.json", "r") as f:
         info = json.load(f)
-    # print(info)
 
-    # load train dataset
-    train_df = pd.read_csv(
-        info["data_path"], header=info["header"], skipinitialspace=True
+    # load relevatn information from info json
+    data_path = info["data_path"]
+    majority_class = info["majority_class"]
+    minority_class = info["minority_class"]
+    target = info["target_col"]
+    column_names = info["column_names"]
+    header = info["header"]
+
+    # multiple spaces as speeration
+    df = pd.read_csv(data_path, sep="\s+", header=header)
+
+    # add column names
+    df.columns = column_names
+
+    # remove unrelevant column
+    df.drop(columns=["Sequence.Name"], inplace=True)
+
+    # filter for minortiy and majoirty class
+    df = df[(df[target] == majority_class) | (df[target] == minority_class)]
+
+    # create train and test splits
+    X = df.iloc[:, :-1]
+    y = df[target]
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, stratify=y, random_state=42, test_size=0.2
     )
 
-    # get columns
-    num_col_idx = info["num_col_idx"]
-    cat_col_idx = info["cat_col_idx"]
-    column_names = info["column_names"]
-    target_col_idx = info["target_col_idx"]
+    # combine X and y for train and test
+    X_train[target] = y_train
+    X_test[target] = y_test
 
-    num_columns = [column_names[i] for i in num_col_idx]
-    cat_columns = [column_names[i] for i in cat_col_idx]
+    df_test = X_test
 
-    # load test, which needs more processing
-    if info["test_path"]:
-        # if testing data is given
-        test_path = info["test_path"]
+    # create different splite of training data
+    train_min = X_train[X_train[target] == minority_class]
+    train_maj_sampled = X_train[X_train[target] == majority_class].sample(
+        n=train_min.shape[0], random_state=42
+    )
+    train_balanced = pd.concat([train_min, train_maj_sampled])
+    # shuffle train_balanced
+    train_balanced = train_balanced.sample(frac=1, random_state=42).reset_index(
+        drop=True
+    )
 
-        with open(test_path, "r") as f:
-            lines = f.readlines()[1:]
-            test_save_path = f"data/raw/adult/test.data"
-            if not os.path.exists(test_save_path):
-                with open(test_save_path, "a") as f1:
-                    for line in lines:
-                        save_line = line.strip("\n").strip(".")
-                        f1.write(f"{save_line}\n")
+    # save processed datasets
+    save_path = "data/processed/yeast"
+    train_min.to_csv(f"{save_path}/train_min.csv", index=False)
+    train_balanced.to_csv(f"{save_path}/train_balanced.csv", index=False)
+    df_test.to_csv(f"{save_path}/test.csv")
 
-        test_df = pd.read_csv(test_save_path, header=None, skipinitialspace=True)
-
-    # ToDo: do I really need this?
-    # add more information to info json
-    col_info = {}
-    for col_idx in num_col_idx:
-        col_info[col_idx] = {
-            "type": "numerical",
-            "max": float(train_df[col_idx].max()),
-            "min": float(train_df[col_idx].min()),
-        }
-
-    for col_idx in cat_col_idx:
-        col_info[col_idx] = {
-            "type": "categorical",
-            "categories": list(set(train_df[col_idx])),
-        }
-
-    # target col info
-    col_info[target_col_idx] = {
-        "type": "categorical",
-        "categories": list(set(train_df[col_idx])),
-    }
-
-    info["column_info"] = col_info
-
-    print(info["column_info"])
-
-    # add column names to dataframes
-    train_df.columns = column_names
-    test_df.columns = column_names
-
-    # handle missing values
-    for col in num_columns:
-        print()
-        train_df.loc[train_df[col] == "?", col] = np.nan
-    for col in cat_columns:
-        train_df.loc[train_df[col] == "?", col] = "nan"
-    for col in num_columns:
-        test_df.loc[test_df[col] == "?", col] = np.nan
-    for col in cat_columns:
-        test_df.loc[test_df[col] == "?", col] = "nan"
-
-    # save data
-    PROCESSED_DATA_PATH = f"data/processed/{args.dataset}"
-    # certe folder
-    os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
-
-    # Todo: add validation and information about train & test
-
-    # Save data specifc for tabsyn
-    X_num_train = train_df[num_columns].to_numpy().astype(np.float32)
-    X_cat_train = train_df[cat_columns].to_numpy()
-    y_train = train_df["income"].to_numpy()
-
-    X_num_test = test_df[num_columns].to_numpy().astype(np.float32)
-    X_cat_test = test_df[cat_columns].to_numpy()
-    y_test = test_df["income"].to_numpy()
-
-    np.save(f"{PROCESSED_DATA_PATH}/X_num_train.npy", X_num_train)
-    np.save(f"{PROCESSED_DATA_PATH}/X_cat_train.npy", X_cat_train)
-    np.save(f"{PROCESSED_DATA_PATH}/y_train.npy", y_train)
-
-    np.save(f"{PROCESSED_DATA_PATH}/X_num_test.npy", X_num_test)
-    np.save(f"{PROCESSED_DATA_PATH}/X_cat_test.npy", X_cat_test)
-    np.save(f"{PROCESSED_DATA_PATH}/y_test.npy", y_test)
-
-    train_df[num_columns] = train_df[num_columns].astype(np.float32)
-    test_df[num_columns] = test_df[num_columns].astype(np.float32)
-
-    train_df.to_csv(f"{PROCESSED_DATA_PATH}/train.csv", index=False)
-    test_df.to_csv(f"{PROCESSED_DATA_PATH}/test.csv", index=False)
-
-    # add more information to info.json
-
-    # add paths to info.json
-    info["train_path_processed"] = f"{PROCESSED_DATA_PATH}/train.csv"
-    info["test_path_processed"] = f"{PROCESSED_DATA_PATH}/test.csv"
-
-    info["column_names"] = column_names
-    info["train_num"] = train_df.shape[0]
-    info["test_num"] = test_df.shape[0]
-
-    print("Numerical", X_num_train.shape)
-    print("Categorical", X_cat_train.shape)
-
-    metadata = {"columns": {}}
-
-    for i in num_col_idx:
-        metadata["columns"][i] = {}
-        metadata["columns"][i]["sdtype"] = "numerical"
-        metadata["columns"][i]["computer_representation"] = "Float"
-
-    for i in cat_col_idx:
-        metadata["columns"][i] = {}
-        metadata["columns"][i]["sdtype"] = "categorical"
-
-    metadata["columns"][target_col_idx] = {}
-    metadata["columns"][target_col_idx]["sdtype"] = "categorical"
-
-    info["metadata"] = metadata
-
-    with open(f"{PROCESSED_DATA_PATH}/info.json", "w") as file:
-        json.dump(info, file, indent=4)
+    print("finished yeast processing")
 
 
-def process_data(name_dataset):
-    if name_dataset == "adult":
-        # can be removed once testing is done
-        if os.path.exists("data/processed/adult"):
-            shutil.rmtree("data/processed/adult")
-            print("deleting exising files")
-        process_adult()
+def process_data(dataset):
+    if dataset == "yeast":
+        print("Process yeast dataset")
+        process_yeast()
 
 
 if __name__ == "__main__":
