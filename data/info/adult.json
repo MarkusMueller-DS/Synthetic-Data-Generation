@@ -27,6 +27,14 @@
         11,
         12
     ],
+    "num_col_names": [
+        "age",
+        "fnlwgt",
+        "education.num",
+        "capital.gain",
+        "capital.loss",
+        "hours.per.week"
+    ],
     "cat_col_idx": [
         1,
         3,
@@ -36,6 +44,16 @@
         8,
         9,
         13
+    ],
+    "cat_col_names": [
+        "workclass",
+        "education",
+        "marital.status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native.country"
     ],
     "target_col_idx": 14,
     "target_col": "income",

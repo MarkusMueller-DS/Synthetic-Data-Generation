@@ -22,22 +22,24 @@ DATASET = args.dataset
 DATA_PATH = "../../data"
 
 
-def ctgan_yeast():
-    print("train and generate data for yeast dataset")
+def ctgan_train_gen(dataset):
+    print(f"train and generate data for {dataset} dataset")
 
     # read info json
-    with open(f"{DATA_PATH}/info/yeast.json", "r") as f:
+    with open(f"{DATA_PATH}/info/{dataset}.json", "r") as f:
         info = json.load(f)
+
+    minority_class = info["minority_class"]
+    majority_class = info["majority_class"]
+    target = info["target_col"]
 
     # load data
     df_train = pd.read_csv(f"{DATA_PATH}/processed/{DATASET}/train_min.csv")
 
-    df_train["localization.site"] = df_train["localization.site"].map(
-        {"CYT": 0, "ME2": 1}
-    )
+    df_train[target] = df_train[target].map({minority_class: 1})
 
     # create specific metadata object of ctgan
-    metadata = Metadata.detect_from_dataframe(data=df_train, table_name="yeast")
+    metadata = Metadata.detect_from_dataframe(data=df_train, table_name=dataset)
     # print(metadata)
 
     # create synthetsizer
@@ -49,10 +51,14 @@ def ctgan_yeast():
 
     # generate synthetic data
     print("Generate synthetic samples")
-    syn_data = synthesizer.sample(num_rows=329)
+    if dataset == "yeast":
+        n = 329
+    elif dataset == "adult":
+        n = 16879
+    syn_data = synthesizer.sample(num_rows=n)
 
     # transform target column back to string values
-    syn_data["localization.site"] = syn_data["localization.site"].map({1: "ME2"})
+    syn_data[target] = syn_data[target].map({1: minority_class})
 
     # save syn data
     save_path = f"{DATA_PATH}/synthetic/{DATASET}/ctgan.csv"
@@ -62,5 +68,7 @@ def ctgan_yeast():
 
 
 if __name__ == "__main__":
-    if DATASET == "yeast":
-        ctgan_yeast()
+    if DATASET in ["yeast", "adult"]:
+        ctgan_train_gen(DATASET)
+    else:
+        print(f"{DATASET} not implemented")

@@ -8,7 +8,7 @@ import argparse
 DATA_DIR = "data/raw"
 
 NAME_URL_DICT_UCI = {
-    # "adult": "https://archive.ics.uci.edu/static/public/2/adult.zip",
+    "adult": "https://archive.ics.uci.edu/static/public/2/adult.zip",
     "cancer": "https://archive.ics.uci.edu/static/public/17/breast+cancer+wisconsin+diagnostic.zip",
     "yeast": "https://archive.ics.uci.edu/static/public/110/yeast.zip",
 }

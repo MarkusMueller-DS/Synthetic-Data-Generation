@@ -73,9 +73,6 @@ syn_path = f"data/synthetic/{DATASET}/{SDG}.csv"
 df_real = pd.read_csv(real_path)
 df_syn = pd.read_csv(syn_path)
 
-print(df_real)
-print(df_syn)
-
 # SMOTE only generates samples of the minority class so filter train.csv to minoirty class
 # if SDG == "smote":
 #    df_real = df_real[df_real["income"] == ">50K"]

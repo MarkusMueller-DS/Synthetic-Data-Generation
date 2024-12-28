@@ -132,55 +132,66 @@ def apply_onehot_encoding(train_df, test_df, categorical_columns):
 def sdg_run():
     print("sdg-run")
 
-    if SDG == "tabsyn":
-        # Path to data
-        data_path_src = f"sdg-models/tabsyn/synthetic/{DATASET}/real_src.csv"
-        syn_path = f"sdg-models/tabsyn/synthetic/{DATASET}/tabsyn.csv"
-        data_path_test = f"sdg-models/tabsyn/synthetic/{DATASET}/test.csv"
+    # load dataset info JSON
+    info_path = f"data/info/{DATASET}"
+    with open(info_path, "r") as f:
+        info = json.load(f)
 
-        # load dataset info JSON
-        info_path = f"sdg-models/tabsyn/data/info/adult.json"
-        if not os.path.exists(info_path):
-            raise FileNotFoundError(f"The file does not exists")
-        else:
-            print("info.json found")
+    # paths to dataset
+    if SDG in ["ctgan", "smote"]:
+        data_path_src = f"data/processed/{DATASET}/train_min.csv"
+        syn_path = f"data/synthetic/{DATASET}/{SDG}.csv"
+        data_path_test = f"data/processed/{DATASET}/test.csv"
 
-        # load info json
-        with open(info_path, "r") as f:
-            info = json.load(f)
-    elif SDG == "ctab-gan-plus":
-        data_path_src = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train_src.csv"
-        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
-        data_path_test = "sdg-models/ctab-gan-plus/Real_Datasets/adult/test.csv"
-
-        # load dataset info JSON
-        info_path = f"sdg-models/ctab-gan-plus/Real_Datasets/info/adult.json"
-        if not os.path.exists(info_path):
-            raise FileNotFoundError(f"The file does not exists")
-        else:
-            print("info.json found")
-
-        # load info json
-        with open(info_path, "r") as f:
-            info = json.load(f)
-    elif SDG == "smote":
-        data_path_src = "sdg-models/smote/data/processed/adult/train.csv"
-        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
-        data_path_test = "sdg-models/smote/data/processed/adult/test.csv"
-
-        # load dataset info JSON
-        info_path = f"sdg-models/smote/data/info/adult.json"
-        if not os.path.exists(info_path):
-            raise FileNotFoundError(f"The file does not exists")
-        else:
-            print("info.json found")
-
-        # load info json
-        with open(info_path, "r") as f:
-            info = json.load(f)
-    else:
-        print(f"{SDG} not implemented")
-        sys.exit(1)
+    #    if SDG == "tabsyn":
+    #        # Path to data
+    #        data_path_src = f"sdg-models/tabsyn/synthetic/{DATASET}/real_src.csv"
+    #        syn_path = f"sdg-models/tabsyn/synthetic/{DATASET}/tabsyn.csv"
+    #        data_path_test = f"sdg-models/tabsyn/synthetic/{DATASET}/test.csv"
+    #
+    #        # load dataset info JSON
+    #        info_path = f"sdg-models/tabsyn/data/info/adult.json"
+    #        if not os.path.exists(info_path):
+    #            raise FileNotFoundError(f"The file does not exists")
+    #        else:
+    #            print("info.json found")
+    #
+    #        # load info json
+    #        with open(info_path, "r") as f:
+    #            info = json.load(f)
+    #    elif SDG == "ctab-gan-plus":
+    #        data_path_src = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train_src.csv"
+    #        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
+    #        data_path_test = "sdg-models/ctab-gan-plus/Real_Datasets/adult/test.csv"
+    #
+    #        # load dataset info JSON
+    #        info_path = f"sdg-models/ctab-gan-plus/Real_Datasets/info/adult.json"
+    #        if not os.path.exists(info_path):
+    #            raise FileNotFoundError(f"The file does not exists")
+    #        else:
+    #            print("info.json found")
+    #
+    #        # load info json
+    #        with open(info_path, "r") as f:
+    #            info = json.load(f)
+    #    elif SDG == "smote":
+    #        data_path_src = "sdg-models/smote/data/processed/adult/train.csv"
+    #        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
+    #        data_path_test = "sdg-models/smote/data/processed/adult/test.csv"
+    #
+    #        # load dataset info JSON
+    #        info_path = f"sdg-models/smote/data/info/adult.json"
+    #        if not os.path.exists(info_path):
+    #            raise FileNotFoundError(f"The file does not exists")
+    #        else:
+    #            print("info.json found")
+    #
+    #        # load info json
+    #        with open(info_path, "r") as f:
+    #            info = json.load(f)
+    #    else:
+    #        print(f"{SDG} not implemented")
+    #        sys.exit(1)
 
     # read data
     df_train_ci = pd.read_csv(data_path_src)
@@ -376,12 +387,4 @@ def sdg_run():
     logger.info("Results saved")
 
 
-def baseline_run():
-    pass
-
-
-# check if baseline run or run with synthetic data
-if SDG != "baseline":
-    sdg_run()
-else:
-    baseline_run()
+sdg_run()

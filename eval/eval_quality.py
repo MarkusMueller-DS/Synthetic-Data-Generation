@@ -37,28 +37,33 @@ SDG = args.model
 # with open(f"data/info/{DATASET}.json", "r") as f:
 #    info = json.load(f)
 
-if DATASET == "adult":
-    if SDG == "tabsyn":
-        real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
-        syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
-    elif SDG == "ctab-gan-plus":
-        real_path = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train.csv"
-        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
-    elif SDG == "smote":
-        real_path = "sdg-models/smote/data/processed/adult/train.csv"
-        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
-    else:
-        print(f"{SDG} not implemented")
-        sys.exit(1)
-elif DATASET == "yeast":
-    if SDG == "ctgan":
-        real_path = "data/processed/yeast/train_min.csv"
-        syn_path = "data/synthetic/yeast/ctgan.csv"
-    else:
-        print(f"{SDG} not implemented")
-else:
-    print(f"{DATASET} not implemented")
-    sys.exit(1)
+if SDG in ["ctgan", "smote"]:
+    real_path = f"data/processed/{DATASET}/train_min.csv"
+    syn_path = f"data/synthetic/{DATASET}/{SDG}.csv"
+
+
+# if DATASET == "adult":
+#    if SDG == "tabsyn":
+#        real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
+#        syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
+#    elif SDG == "ctab-gan-plus":
+#       real_path = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train.csv"
+#        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
+#    elif SDG == "smote":
+#        real_path = "sdg-models/smote/data/processed/adult/train.csv"
+#        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
+#    else:
+#       print(f"{SDG} not implemented")
+#        sys.exit(1)
+# elif DATASET == "yeast":
+#    if SDG == "ctgan":
+#        real_path = "data/processed/yeast/train_min.csv"
+#        syn_path = "data/synthetic/yeast/ctgan.csv"
+#    else:
+#        print(f"{SDG} not implemented")
+# else:
+#    print(f"{DATASET} not implemented")
+#    sys.exit(1)
 
 
 df_real = pd.read_csv(real_path)

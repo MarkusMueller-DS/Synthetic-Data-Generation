@@ -16,18 +16,18 @@ args = parser.parse_args()
 INFO_PATH = "data/info"
 
 
-def process_yeast():
+def process_yeast(dataset):
     # no missing values
     # only numerical columns
     # remove first column from dataset
     # split data
 
     # create folder structure
-    os.makedirs("data/processed/yeast", exist_ok=True)
-    os.makedirs("data/synthetic/yeast", exist_ok=True)
+    os.makedirs(f"data/processed/{dataset}", exist_ok=True)
+    os.makedirs(f"data/synthetic/{dataset}", exist_ok=True)
 
     # read info json
-    with open(f"{INFO_PATH}/yeast.json", "r") as f:
+    with open(f"{INFO_PATH}/{dataset}.json", "r") as f:
         info = json.load(f)
 
     # load relevatn information from info json
@@ -76,7 +76,7 @@ def process_yeast():
     )
 
     # save processed datasets
-    save_path = "data/processed/yeast"
+    save_path = f"data/processed/{dataset}"
     train_min.to_csv(f"{save_path}/train_min.csv", index=False)
     train_balanced.to_csv(f"{save_path}/train_balanced.csv", index=False)
     df_train.to_csv(f"{save_path}/train_src.csv", index=False)
@@ -85,11 +85,83 @@ def process_yeast():
     print("finished yeast processing")
 
 
-def process_data(dataset):
-    if dataset == "yeast":
-        print("Process yeast dataset")
-        process_yeast()
+def process_adult(dataset):
+    # create folder structure
+    os.makedirs(f"data/processed/{dataset}", exist_ok=True)
+    os.makedirs(f"data/synthetic/{dataset}", exist_ok=True)
+
+    # read info json
+    with open(f"{INFO_PATH}/{dataset}.json", "r") as f:
+        info = json.load(f)
+
+    # load relevatn information from info json
+    data_path = info["data_path"]
+    test_path = info["test_path"]
+    majority_class = info["majority_class"]
+    minority_class = info["minority_class"]
+    target = info["target_col"]
+    column_names = info["column_names"]
+    header = info["header"]
+    num_columns = info["num_col_names"]
+    cat_columns = info["cat_col_names"]
+
+    # read data
+    train_df = pd.read_csv(data_path, header=header, skipinitialspace=True)
+
+    with open(test_path, "r") as f:
+        lines = f.readlines()[1:]
+        test_save_path = f"data/raw/{dataset}/test.data"
+        if not os.path.exists(test_save_path):
+            with open(test_save_path, "a") as f1:
+                for line in lines:
+                    save_line = line.strip("\n").strip(".")
+                    f1.write(f"{save_line}\n")
+
+    test_df = pd.read_csv(test_save_path, header=header, skipinitialspace=True)
+
+    # add column names
+    train_df.columns = column_names
+    test_df.columns = column_names
+
+    # transfrom missing values to standard format
+    # missing values are marked with ?
+    for col in num_columns:
+        train_df.loc[train_df[col] == "?", col] = np.nan
+        test_df.loc[test_df[col] == "?", col] = np.nan
+
+    for col in cat_columns:
+        train_df.loc[train_df[col] == "?", col] = "nan"
+        test_df.loc[test_df[col] == "?", col] = "nan"
+
+    # create different splite of training data
+    train_min = train_df[train_df[target] == minority_class]
+    train_maj_sampled = train_df[train_df[target] == majority_class].sample(
+        n=train_min.shape[0], random_state=42
+    )
+    train_balanced = pd.concat([train_min, train_maj_sampled])
+    # shuffle train_balanced
+    train_balanced = train_balanced.sample(frac=1, random_state=42).reset_index(
+        drop=True
+    )
+
+    # save processed datasets
+    save_path = f"data/processed/{dataset}"
+    train_min.to_csv(f"{save_path}/train_min.csv", index=False)
+    train_balanced.to_csv(f"{save_path}/train_balanced.csv", index=False)
+    train_df.to_csv(f"{save_path}/train_src.csv", index=False)
+    test_df.to_csv(f"{save_path}/test.csv", index=False)
+
+    print(f"finished {dataset} processing")
 
 
 if __name__ == "__main__":
-    process_data(args.dataset)
+    DATASET = args.dataset
+    if DATASET == "yeast":
+        print("Process yeast dataset")
+        process_yeast(DATASET)
+    elif DATASET == "adult":
+        print("Process adult dataset")
+        process_adult(DATASET)
+    else:
+        print(f"{DATASET} not implemented")
+        sys.exit(1)
