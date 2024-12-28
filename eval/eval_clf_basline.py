@@ -1,3 +1,4 @@
+import sys
 import os
 import logging
 from datetime import datetime
@@ -39,7 +40,7 @@ print(args.run)
 TS = datetime.now().strftime("%Y%m%d_%H%M%S")
 SDG = "baseline"  # name of used generation model
 RUN = args.run  # status of run test or final run
-DATASET = args.dataset  # which dataset was use
+DATASET = args.dataset  # which dataset was used
 
 
 # check if there is a log present
@@ -52,7 +53,7 @@ else:
 print(RUN_ID)
 
 # load dataset info JSON
-info_path = f"data/processed/{DATASET}/info.json"
+info_path = f"data/info/{DATASET}.json"
 if not os.path.exists(info_path):
     raise FileNotFoundError(f"The file does not exists")
 else:
@@ -133,19 +134,17 @@ def apply_onehot_encoding(train_df, test_df, categorical_columns):
 
 
 def baseline_run():
-    print("baseline run")
+    print(f"Baseline run for dataset: {DATASET}")
 
     # Path to data
-    data_path_train = f"data/processed/{DATASET}/train.csv"
+    data_path_train = f"data/processed/{DATASET}/train_src.csv"
     data_path_test = f"data/processed/{DATASET}/test.csv"
 
     # read data
     df_train = pd.read_csv(data_path_train)
     df_test = pd.read_csv(data_path_test)
 
-    target_col_idx = info["target_col_idx"]
-    target_col_name = info["column_names"][target_col_idx]
-    print("Traget column:", target_col_idx)
+    target_col_name = info["target_col"]
     print("Target column name:", target_col_name)
 
     counts = df_train[target_col_name].value_counts()
@@ -161,32 +160,42 @@ def baseline_run():
     # certain classification models need numbers as the y variable, like XGBoost
     # 1 for minority class and 0 for majority class
     df_train[target_col_name] = df_train[target_col_name].map(
-        {info["maj_class"]: 0, info["min_class"]: 1}
+        {info["majority_class"]: 0, info["minority_class"]: 1}
     )
     df_test[target_col_name] = df_test[target_col_name].map(
-        {info["maj_class"]: 0, info["min_class"]: 1}
+        {info["majority_class"]: 0, info["minority_class"]: 1}
     )
 
     # impute misisng values
-    df_train = impute_missing_values(df_train)
-    df_test = impute_missing_values(df_test)
+    # yeast has no missing values
+    if DATASET in ["adult"]:
+        df_train = impute_missing_values(df_train)
+        df_test = impute_missing_values(df_test)
 
     print("NaNs in df_train:", df_train.isnull().values.any())
     print("NaNs in df_test:", df_test.isnull().values.any())
 
     # get names of the categorical column for one hot encoding
-    cat_columns_idx = info["cat_col_idx"]
-    columns_names = info["column_names"]
-    cat_columns_names = [columns_names[i] for i in cat_columns_idx]
-    # on hot encode categorical data
-    df_train, df_test = apply_onehot_encoding(df_train, df_test, cat_columns_names)
+    if DATASET in ["adult"]:
+        cat_columns_idx = info["cat_col_idx"]
+        columns_names = info["column_names"]
+        cat_columns_names = [columns_names[i] for i in cat_columns_idx]
+        # on hot encode categorical data
+        df_train, df_test = apply_onehot_encoding(df_train, df_test, cat_columns_names)
 
-    # split data
-    X_train = df_train.drop(columns=[f"remainder__{target_col_name}"])
-    y_train = df_train[f"remainder__{target_col_name}"]
+        # split data with onehot encoding
+        X_train = df_train.drop(columns=[f"remainder__{target_col_name}"])
+        y_train = df_train[f"remainder__{target_col_name}"]
 
-    X_test = df_test.drop(columns=[f"remainder__{target_col_name}"])
-    y_test = df_test[f"remainder__{target_col_name}"]
+        X_test = df_test.drop(columns=[f"remainder__{target_col_name}"])
+        y_test = df_test[f"remainder__{target_col_name}"]
+    else:
+        # split data without one hot encoding
+        X_train = df_train.drop(columns=[target_col_name])
+        y_train = df_train[target_col_name]
+
+        X_test = df_test.drop(columns=[target_col_name])
+        y_test = df_test[target_col_name]
 
     logger.info("-" * 50)
     logger.info("Shape of train and test data")
@@ -234,6 +243,7 @@ def baseline_run():
         # log results
         logger.info(f"Accuracy Score: {accuracy_score_value}")
         logger.info(f"F1-Score of minority class: {f1_score_value}")
+        logger.info(f"Roc-AUC-Score: {roc_auc_score_value}")
         logger.info(f"{classification_report(y_test, y_pred)}")
 
         # add results to dict

@@ -1,3 +1,6 @@
+# info: works with sdg-eda-env
+# ToDo: does not work with eval-env
+
 import pandas as pd
 import os
 import argparse
@@ -37,30 +40,45 @@ os.makedirs(output_folder_cat, exist_ok=True)
 os.makedirs(output_folder_num, exist_ok=True)
 os.makedirs(output_folder_tsne, exist_ok=True)
 
-if DATASET == "adult":
-    if SDG == "tabsyn":
-        real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
-        syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
-    elif SDG == "ctab-gan-plus":
-        real_path = f"sdg-models/ctab-gan-plus/Real_Datasets/{DATASET}/train.csv"
-        syn_path = f"sdg-models/ctab-gan-plus/Fake_Datasets/{DATASET}/adult_fake_0.csv"
-    elif SDG == "smote":
-        real_path = "sdg-models/smote/data/processed/adult/train.csv"
-        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
-    else:
-        print(f"{SDG} not implemented")
-        sys.exit(1)
+
+if SDG in ["ctgan", "smote"]:
+    real_path = f"data/processed/{DATASET}/train_min.csv"
+elif SDG in ["ctag-gan-plus", "tabsyn"]:
+    real_path = f"data/processed/{DATASET}/train_balanced.csv"
 else:
-    print(f"{DATASET} not implemented")
+    print(f"{SDG} not implemented")
     sys.exit(1)
+
+
+syn_path = f"data/synthetic/{DATASET}/{SDG}.csv"
+
+# if DATASET == "adult":
+#    if SDG == "tabsyn":
+#        real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
+#        syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
+#    elif SDG == "ctab-gan-plus":
+#        real_path = f"sdg-models/ctab-gan-plus/Real_Datasets/{DATASET}/train.csv"
+#        syn_path = f"sdg-models/ctab-gan-plus/Fake_Datasets/{DATASET}/adult_fake_0.csv"
+#    elif SDG == "smote":
+#        real_path = "sdg-models/smote/data/processed/adult/train.csv"
+#        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
+#    else:
+#        print(f"{SDG} not implemented")
+#        sys.exit(1)
+# else:
+#    print(f"{DATASET} not implemented")
+#    sys.exit(1)
 
 
 df_real = pd.read_csv(real_path)
 df_syn = pd.read_csv(syn_path)
 
+print(df_real)
+print(df_syn)
+
 # SMOTE only generates samples of the minority class so filter train.csv to minoirty class
-if SDG == "smote":
-    df_real = df_real[df_real["income"] == ">50K"]
+# if SDG == "smote":
+#    df_real = df_real[df_real["income"] == ">50K"]
 
 
 # load info json
@@ -90,6 +108,12 @@ if DATASET == "adult":
         "capital.loss",
         "hours.per.week",
     ]
+elif DATASET == "yeast":
+    cat_cols = ["localization.site"]
+    num_cols = ["mcg", "gvh", "alm", "mit", "erl", "pox", "vac", "nuc"]
+else:
+    print(f"{DATASET} not implemented")
+    sys.exit(1)
 
 # generate plots for categorical columns
 for col in cat_cols:

@@ -1,3 +1,4 @@
+import sys
 import os
 import json
 import pandas as pd
@@ -60,11 +61,12 @@ def process_yeast():
     X_train[target] = y_train
     X_test[target] = y_test
 
+    df_train = X_train
     df_test = X_test
 
     # create different splite of training data
-    train_min = X_train[X_train[target] == minority_class]
-    train_maj_sampled = X_train[X_train[target] == majority_class].sample(
+    train_min = df_train[df_train[target] == minority_class]
+    train_maj_sampled = df_train[X_train[target] == majority_class].sample(
         n=train_min.shape[0], random_state=42
     )
     train_balanced = pd.concat([train_min, train_maj_sampled])
@@ -77,7 +79,8 @@ def process_yeast():
     save_path = "data/processed/yeast"
     train_min.to_csv(f"{save_path}/train_min.csv", index=False)
     train_balanced.to_csv(f"{save_path}/train_balanced.csv", index=False)
-    df_test.to_csv(f"{save_path}/test.csv")
+    df_train.to_csv(f"{save_path}/train_src.csv", index=False)
+    df_test.to_csv(f"{save_path}/test.csv", index=False)
 
     print("finished yeast processing")
 

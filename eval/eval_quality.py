@@ -30,13 +30,12 @@ args = parser.parse_args()
 print(args.model)
 print(args.dataset)
 
-
-# load info json
-with open("sdg-models/tabsyn/data/info/adult.json", "r") as f:
-    info = json.load(f)
-
 DATASET = args.dataset
 SDG = args.model
+
+# load info json
+# with open(f"data/info/{DATASET}.json", "r") as f:
+#    info = json.load(f)
 
 if DATASET == "adult":
     if SDG == "tabsyn":
@@ -51,6 +50,12 @@ if DATASET == "adult":
     else:
         print(f"{SDG} not implemented")
         sys.exit(1)
+elif DATASET == "yeast":
+    if SDG == "ctgan":
+        real_path = "data/processed/yeast/train_min.csv"
+        syn_path = "data/synthetic/yeast/ctgan.csv"
+    else:
+        print(f"{SDG} not implemented")
 else:
     print(f"{DATASET} not implemented")
     sys.exit(1)
@@ -60,10 +65,9 @@ df_real = pd.read_csv(real_path)
 df_syn = pd.read_csv(syn_path)
 
 # SMOTE only generates samples of the minority class so filter train.csv to minoirty class
-if SDG == "smote":
-    df_real = df_real[df_real["income"] == ">50K"]
-
-print(df_real["income"].value_counts())
+# ToDo: überarbeiten!!
+# if SDG == "smote":
+#    df_real = df_real[df_real["income"] == ">50K"]
 
 if DATASET == "adult":
     cat_cols = [
@@ -77,6 +81,8 @@ if DATASET == "adult":
         "native.country",
         "income",
     ]
+elif DATASET == "yeast":
+    cat_cols = ["localization.site"]
 else:
     print(f"{DATASET} not implemented")
 
