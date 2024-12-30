@@ -53,6 +53,8 @@ def train_gen(dataset):
             "hours.per.week",
             "education.num",
         ]
+        # defien the amount of data to be generated
+        n = 33758
     elif dataset == "yeast":
         categorical_columns = ["localization.site"]
         log_columns = []
@@ -60,6 +62,8 @@ def train_gen(dataset):
         general_columns = []
         non_categorical_columns = []
         integer_columns = ["mcg", "gvh", "alm", "mit", "erl", "pox", "vac", "nuc"]
+        # define the amount of data to be generated
+        n = 329
     else:
         print(f"{dataset} not implemented")
 
@@ -76,7 +80,7 @@ def train_gen(dataset):
     )
 
     synthesizer.fit()
-    syn_data = synthesizer.generate_samples()
+    syn_data = synthesizer.generate_samples(n)
 
     # save syn data
     save_path = f"{DATA_PATH}/synthetic/{dataset}/ctab-gan-plus.csv"

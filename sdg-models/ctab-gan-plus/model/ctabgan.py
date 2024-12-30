@@ -84,10 +84,9 @@ class CTABGAN:
         end_time = time.time()
         print("Finished training in", end_time - start_time, " seconds.")
 
-    def generate_samples(self):
+    def generate_samples(self, n):
 
-        # sample = self.synthesizer.sample(len(self.raw_df))
-        sample = self.synthesizer.sample(33758)
+        sample = self.synthesizer.sample(n)
         sample_df = self.data_prep.inverse_prep(sample)
 
         return sample_df
