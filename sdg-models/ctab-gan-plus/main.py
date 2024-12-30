@@ -88,7 +88,7 @@ def train_gen(dataset):
 if __name__ == "__main__":
     args = parser.parse_args()
     dataset = args.dataset
-    if dataset in ["adult"]:
+    if dataset in ["adult", "yeast"]:
         train_gen(dataset)
     else:
         print(f"{dataset} not implemented")
