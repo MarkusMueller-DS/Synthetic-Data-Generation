@@ -401,7 +401,7 @@ class CTABGANSynthesizer:
         num_channels=64,
         l2scale=1e-5,
         batch_size=500,
-        epochs=10,
+        epochs=1,
     ):
 
         self.random_dim = random_dim
@@ -637,8 +637,8 @@ class CTABGANSynthesizer:
             epoch += 1
 
         # add code to save the model
-        model_save_path = "ctab-gan-plus_model"
-        torch.save(self.generator.state_dict(), model_save_path)
+        # model_save_path = "ctab-gan-plus_model"
+        # torch.save(self.generator.state_dict(), model_save_path)
 
         # code to load the model
         # generator = Generator(self.gside, layers_G).to(self.device)
@@ -647,6 +647,7 @@ class CTABGANSynthesizer:
         # print("Das Modell wurde erfolgreich geladen.")
 
     def sample(self, n):
+        print(n)
 
         self.generator.eval()
 
@@ -672,8 +673,11 @@ class CTABGANSynthesizer:
 
         data = np.concatenate(data, axis=0)
         result, resample = self.transformer.inverse_transform(data)
+        counter = 0
 
         while len(result) < n:
+            counter += 1
+            print("Step:", counter)
             data_resample = []
             steps_left = resample // self.batch_size + 1
 

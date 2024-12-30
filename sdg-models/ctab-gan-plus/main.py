@@ -53,7 +53,7 @@ def train_gen(dataset):
             "hours.per.week",
             "education.num",
         ]
-        # defien the amount of data to be generated
+        # define the amount of data to be generated
         n = 33758
     elif dataset == "yeast":
         categorical_columns = ["localization.site"]
