@@ -25,6 +25,8 @@ def train_gen(dataset):
     with open(f"{INFO_PATH}/{dataset}.json", "r") as f:
         info = json.load(f)
 
+    target = info["target_col"]
+
     train_path = f"{DATA_PATH}/processed/{dataset}/train_balanced.csv"
 
     if dataset == "adult":
@@ -51,8 +53,15 @@ def train_gen(dataset):
             "hours.per.week",
             "education.num",
         ]
-    if dataset == "yeast":
-        pass
+    elif dataset == "yeast":
+        categorical_columns = ["localization.site"]
+        log_columns = []
+        mixed_columns = {}
+        general_columns = []
+        non_categorical_columns = []
+        integer_columns = ["mcg", "gvh", "alm", "mit", "erl", "pox", "vac", "nuc"]
+    else:
+        print(f"{dataset} not implemented")
 
     synthesizer = CTABGAN(
         raw_csv_path=train_path,
@@ -63,7 +72,7 @@ def train_gen(dataset):
         general_columns=general_columns,
         non_categorical_columns=non_categorical_columns,
         integer_columns=integer_columns,
-        problem_type={"Classification": "income"},
+        problem_type={"Classification": target},
     )
 
     synthesizer.fit()
@@ -72,6 +81,8 @@ def train_gen(dataset):
     # save syn data
     save_path = f"{DATA_PATH}/synthetic/{dataset}/ctab-gan-plus.csv"
     syn_data.to_csv(save_path, index=False)
+    print("saved synthtic data here:", save_path)
+    print("Finished data generation")
 
 
 if __name__ == "__main__":
