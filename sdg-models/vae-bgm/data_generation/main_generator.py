@@ -210,9 +210,14 @@ def train(data_manager, params, seed, output_dir, args):
     rec_info = model.predict(data[2])
 
     # Obtain and save synthetic samples using TESTING data
-    n_gen = data[0].shape[0]
-    # print(n_gen)
-    # print(data_manager)
+    # n_gen = data[0].shape[0]
+    print(args["datasets"])
+    if args["datasets"] == ["adult"]:
+        n_gen = 33758
+    elif args["datasets"] == ["yeast"]:
+        n_gen = 658
+
+    print("n_gen:", n_gen)
     model.train_latent_generator(data[0])
     model.generate(n_gen=n_gen)
     model.validate_samples_range(data_manager, n_gen)
@@ -328,6 +333,7 @@ def main_mod():
         if args["train"]:
             print("train")
             # Load and prepare data
+            print("process data")
             data_manager, split_list = preprocess_data(dataset_name, args)
             data_manager.save_input_data_to_csv(output_dir)  # Saved for future use
             data_manager.generate_mask = False
@@ -368,6 +374,7 @@ def main():
         if args["train"]:
             # Load and prepare data
             data_manager = preprocess_data(dataset_name, args)
+            sys.exit(0)
             data_manager.save_input_data_to_csv(output_dir)  # Saved for future use
             data_manager.generate_mask = False
             data_manager.split_data()

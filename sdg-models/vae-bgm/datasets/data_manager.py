@@ -311,10 +311,10 @@ class DataManager:
         # Denormalize generated samples to check data ranges
         cov_samples = gen_info["cov_samples"]
         denorm_gen_df = self.transform_data(cov_samples, denorm=True)
-        print(denorm_gen_df)
 
         # Remove negative gaussian samples if the original data didn't have them and convert data types to originals'
         for idx in range(self.columns.size):
+            print("postprocess :", idx)
             if idx in self.positive_gaussian_cols:
                 cov_samples = cov_samples[denorm_gen_df.iloc[:, idx] >= 0]
                 gen_info["z"] = gen_info["z"][denorm_gen_df.iloc[:, idx] >= 0]
@@ -339,7 +339,6 @@ class DataManager:
                     denorm_gen_df.iloc[:, idx] = denorm_gen_df.iloc[:, idx].round()
 
         # set imp_norm_df columns names to denorm_gen_df columns names
-        print(self.imp_norm_df.columns)
         cols = self.imp_norm_df.columns[:-1]
         denorm_gen_df.columns = cols
         gen_info["raw_cov_samples"] = denorm_gen_df
@@ -347,6 +346,7 @@ class DataManager:
         # norm_gen_df.columns = self.imp_norm_df.columns
         gen_info["cov_samples"] = self.transform_data(denorm_gen_df)
 
+        # print("gen_info:", gen_info)
         return gen_info
 
     def save_data_to_csv(self, path, model_path, gen_info):

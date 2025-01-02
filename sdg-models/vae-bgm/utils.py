@@ -34,6 +34,8 @@ def save(res, path):
 def preprocess_data(dataset_name, args):
     if dataset_name == "adult":
         data = preprocess_adult(dataset_name)
+    elif dataset_name == "yeast":
+        data = preprocess_yeast(dataset_name)
     elif dataset_name == "metabric":
         data = preprocess_metabric(dataset_name)
     elif dataset_name == "std":
@@ -92,7 +94,7 @@ def run_args():
 
     # Data
     datasets = []
-    dataset_name = "adult"
+    dataset_name = "yeast"
     if dataset_name == "all":
         datasets = ["adult", "metabric", "std"]
     else:
@@ -124,7 +126,8 @@ def run_args():
     # VAE hyperparameters
     # args["n_threads"] = 15
     args["n_threads"] = 1
-    args["n_seeds"] = 15
+    # args["n_seeds"] = 15
+    args["n_seeds"] = 1
     args["param_comb"] = [{"hidden_size": 50, "latent_dim": 5}]
 
     # Generation parameters
@@ -132,7 +135,7 @@ def run_args():
 
     # Dataset nature (for validation)
     args["sa_datasets"] = ["metabric", "std"]
-    args["cl_datasets"] = ["adult"]
+    args["cl_datasets"] = ["yeast"]
 
     # SOTA models
     args["sota_output_dir"] = (
