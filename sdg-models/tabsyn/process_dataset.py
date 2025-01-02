@@ -208,9 +208,6 @@ def process_data(info_path, data_path, dataset):
     print(train_df.shape)
     print(train_df[target_col_idx].value_counts())
 
-    print(train_df)
-    print(test_df)
-
     col_info = {}
 
     for col_idx in num_col_idx:
@@ -241,8 +238,27 @@ def process_data(info_path, data_path, dataset):
 
     info["column_info"] = col_info
 
-    train_df.rename(columns=idx_name_mapping, inplace=True)
-    test_df.rename(columns=idx_name_mapping, inplace=True)
+    print(idx_name_mapping)
+    print(test_df)
+
+    # column names of yeast are differnet to those in info json
+    if dataset == "yeast":
+        column_names = [
+            "mcg",
+            "gvh",
+            "alm",
+            "mit",
+            "erl",
+            "pox",
+            "vac",
+            "nuc",
+            "localization.site",
+        ]
+        train_df.columns = column_names
+        test_df.columns = column_names
+    else:
+        train_df.rename(columns=idx_name_mapping, inplace=True)
+        test_df.rename(columns=idx_name_mapping, inplace=True)
 
     # for col in num_columns:
     #    train_df.loc[train_df[col] == "?", col] = np.nan
@@ -253,6 +269,9 @@ def process_data(info_path, data_path, dataset):
     # for col in cat_columns:
     #    test_df.loc[test_df[col] == "?", col] = "nan"
 
+    print(test_df)
+
+    print(num_columns)
     X_num_train = train_df[num_columns].to_numpy().astype(np.float32)
     X_cat_train = train_df[cat_columns].to_numpy()
     y_train = train_df[target_col].to_numpy()
@@ -261,7 +280,8 @@ def process_data(info_path, data_path, dataset):
     X_cat_test = test_df[cat_columns].to_numpy()
     y_test = test_df[target_col].to_numpy()
 
-    save_dir = f"{data_path}/processed/{dataset}"
+    save_dir = f"data/{dataset}"
+    os.makedirs(save_dir, exist_ok=True)
     np.save(f"{save_dir}/X_num_train.npy", X_num_train)
     np.save(f"{save_dir}/X_cat_train.npy", X_cat_train)
     np.save(f"{save_dir}/y_train.npy", y_train)
@@ -286,6 +306,7 @@ def process_data(info_path, data_path, dataset):
 
     print("Numerical", X_num_train.shape)
     print("Categorical", X_cat_train.shape)
+    print("Categorical:", X_cat_train)
 
     info["column_names"] = column_names
     info["train_num"] = train_df.shape[0]

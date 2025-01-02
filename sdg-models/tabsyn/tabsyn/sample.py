@@ -13,8 +13,8 @@ warnings.filterwarnings("ignore")
 
 def main(args):
     dataname = args.dataname
-    # device = args.device
-    device = "cpu"
+    device = args.device
+    # device = "cpu"
     steps = args.steps
     save_path = args.save_path
 
@@ -40,6 +40,8 @@ def main(args):
     # num_samples = train_z.shape[0]
     if args.dataname == "adult":
         num_samples = 33758
+    if args.dataname == "yeast":
+        num_samples = 658
     print("num_sample:", num_samples)
     sample_dim = in_dim
 
