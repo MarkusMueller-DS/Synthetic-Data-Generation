@@ -63,3 +63,9 @@ if __name__ == "__main__":
     if args.dataset in ["yeast", "adult"]:
         delete_files(args.dataset)
         download_from_uci(args.dataset)
+    if args.dataset == "cc-fraud":
+        print(
+            "please download dataset from here: https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud"
+        )
+        print("save datast here data/raw/cc-fraud/creaditcard.csv")
+        os.makedirs("data/raw/cc-fraud", exist_ok=True)

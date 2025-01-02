@@ -11,9 +11,9 @@ from scipy.stats import wasserstein_distance
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime
 
-# from synthcity.metrics import eval_detection, eval_performance, eval_statistical
-# from synthcity.plugins.core.dataloader import GenericDataLoader
-# from sklearn.preprocessing import OneHotEncoder
+from synthcity.metrics import eval_detection, eval_performance, eval_statistical
+from synthcity.plugins.core.dataloader import GenericDataLoader
+from sklearn.preprocessing import OneHotEncoder
 
 parser = argparse.ArgumentParser(description="Evaluation plots")
 
@@ -34,45 +34,16 @@ DATASET = args.dataset
 SDG = args.model
 
 # load info json
-# with open(f"data/info/{DATASET}.json", "r") as f:
-#    info = json.load(f)
+with open(f"data/info/{DATASET}.json", "r") as f:
+    info = json.load(f)
 
 if SDG in ["ctgan", "smote"]:
     real_path = f"data/processed/{DATASET}/train_min.csv"
     syn_path = f"data/synthetic/{DATASET}/{SDG}.csv"
 
-
-# if DATASET == "adult":
-#    if SDG == "tabsyn":
-#        real_path = "sdg-models/tabsyn/synthetic/adult/real.csv"
-#        syn_path = "sdg-models/tabsyn/synthetic/adult/tabsyn.csv"
-#    elif SDG == "ctab-gan-plus":
-#       real_path = "sdg-models/ctab-gan-plus/Real_Datasets/adult/train.csv"
-#        syn_path = "sdg-models/ctab-gan-plus/Fake_Datasets/adult/adult_fake_0.csv"
-#    elif SDG == "smote":
-#        real_path = "sdg-models/smote/data/processed/adult/train.csv"
-#        syn_path = "sdg-models/smote/data/synthetic/adult/syn_data.csv"
-#    else:
-#       print(f"{SDG} not implemented")
-#        sys.exit(1)
-# elif DATASET == "yeast":
-#    if SDG == "ctgan":
-#        real_path = "data/processed/yeast/train_min.csv"
-#        syn_path = "data/synthetic/yeast/ctgan.csv"
-#    else:
-#        print(f"{SDG} not implemented")
-# else:
-#    print(f"{DATASET} not implemented")
-#    sys.exit(1)
-
-
 df_real = pd.read_csv(real_path)
 df_syn = pd.read_csv(syn_path)
 
-# SMOTE only generates samples of the minority class so filter train.csv to minoirty class
-# ToDo: überarbeiten!!
-# if SDG == "smote":
-#    df_real = df_real[df_real["income"] == ">50K"]
 
 if DATASET == "adult":
     cat_cols = [
@@ -99,105 +70,108 @@ for col in cat_cols:
 
 ### Statistical similarity
 # code from ctab-gan-plus repo
-really = df_real.copy()
-fakey = df_syn.copy()
+def eval_stat():
+    really = df_real.copy()
+    fakey = df_syn.copy()
 
-# create corrleation matrix
-real_corr = compute_associations(df_real, nominal_columns=cat_cols)
-syn_corr = compute_associations(df_syn, nominal_columns=cat_cols)
+    # create corrleation matrix
+    real_corr = compute_associations(df_real, nominal_columns=cat_cols)
+    syn_corr = compute_associations(df_syn, nominal_columns=cat_cols)
 
-corr_dist = np.linalg.norm(real_corr - syn_corr)
+    corr_dist = np.linalg.norm(real_corr - syn_corr)
 
-Stat_dict = {}
-cat_stat = []
-num_stat = []
+    Stat_dict = {}
+    cat_stat = []
+    num_stat = []
 
-for column in df_real.columns:
+    for column in df_real.columns:
 
-    if column in cat_cols:
-        # print(column)
+        if column in cat_cols:
+            # print(column)
 
-        real_pdf = really[column].value_counts() / really[column].value_counts().sum()
-        fake_pdf = fakey[column].value_counts() / fakey[column].value_counts().sum()
-        categories = (
-            (fakey[column].value_counts() / fakey[column].value_counts().sum())
-            .keys()
-            .tolist()
-        )
-        sorted_categories = sorted(categories)
-
-        real_pdf_values = []
-        fake_pdf_values = []
-
-        for i in sorted_categories:
-            real_pdf_values.append(real_pdf[i])
-            fake_pdf_values.append(fake_pdf[i])
-
-        if len(real_pdf) != len(fake_pdf):
-            zero_cats = set(really[column].value_counts().keys()) - set(
-                fakey[column].value_counts().keys()
+            real_pdf = (
+                really[column].value_counts() / really[column].value_counts().sum()
             )
-            for z in zero_cats:
-                real_pdf_values.append(real_pdf[z])
-                fake_pdf_values.append(0)
-        Stat_dict[column] = distance.jensenshannon(
-            real_pdf_values, fake_pdf_values, 2.0
-        )
-        cat_stat.append(Stat_dict[column])
-        # print("column: ", column, "JSD: ", Stat_dict[column])
-    else:
-        scaler = MinMaxScaler()
-        scaler.fit(df_real[column].values.reshape(-1, 1))
-        l1 = scaler.transform(df_real[column].values.reshape(-1, 1)).flatten()
-        l2 = scaler.transform(df_syn[column].values.reshape(-1, 1)).flatten()
-        Stat_dict[column] = wasserstein_distance(l1, l2)
-        # print("column: ", column, "WD: ", Stat_dict[column])
-        num_stat.append(Stat_dict[column])
+            fake_pdf = fakey[column].value_counts() / fakey[column].value_counts().sum()
+            categories = (
+                (fakey[column].value_counts() / fakey[column].value_counts().sum())
+                .keys()
+                .tolist()
+            )
+            sorted_categories = sorted(categories)
 
+            real_pdf_values = []
+            fake_pdf_values = []
 
-print(np.mean(num_stat), np.mean(cat_stat), corr_dist)
+            for i in sorted_categories:
+                real_pdf_values.append(real_pdf[i])
+                fake_pdf_values.append(fake_pdf[i])
 
-# check if there is already a csv to save the results
-if not os.path.exists("results/quality_data.csv"):
+            if len(real_pdf) != len(fake_pdf):
+                zero_cats = set(really[column].value_counts().keys()) - set(
+                    fakey[column].value_counts().keys()
+                )
+                for z in zero_cats:
+                    real_pdf_values.append(real_pdf[z])
+                    fake_pdf_values.append(0)
+            Stat_dict[column] = distance.jensenshannon(
+                real_pdf_values, fake_pdf_values, 2.0
+            )
+            cat_stat.append(Stat_dict[column])
+            # print("column: ", column, "JSD: ", Stat_dict[column])
+        else:
+            scaler = MinMaxScaler()
+            scaler.fit(df_real[column].values.reshape(-1, 1))
+            l1 = scaler.transform(df_real[column].values.reshape(-1, 1)).flatten()
+            l2 = scaler.transform(df_syn[column].values.reshape(-1, 1)).flatten()
+            Stat_dict[column] = wasserstein_distance(l1, l2)
+            # print("column: ", column, "WD: ", Stat_dict[column])
+            num_stat.append(Stat_dict[column])
+
+    print(np.mean(num_stat), np.mean(cat_stat), corr_dist)
+
+    # check if there is already a csv to save the results
+    if not os.path.exists("results/quality_data.csv"):
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        init_data = [
+            {
+                "Timestamp": ts,
+                "Syn_Algo": "init",
+                "Dataset": "init",
+                "Average WD (Continuous Columns)": 0,
+                "Average JSD (Categorical Columns)": 0,
+                "Correlation Distance": 0,
+            }
+        ]
+        resutls_df = pd.DataFrame(init_data)
+        resutls_df.to_csv("results/quality_data.csv", index=False)
+
+    df_old = pd.read_csv("results/quality_data.csv")
+
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    init_data = [
+    new_data = [
         {
             "Timestamp": ts,
-            "Syn_Algo": "init",
-            "Dataset": "init",
-            "Average WD (Continuous Columns)": 0,
-            "Average JSD (Categorical Columns)": 0,
-            "Correlation Distance": 0,
+            "Syn_Algo": SDG,
+            "Dataset": DATASET,
+            "Average WD (Continuous Columns)": np.mean(num_stat),
+            "Average JSD (Categorical Columns)": np.mean(cat_stat),
+            "Correlation Distance": corr_dist,
         }
     ]
-    resutls_df = pd.DataFrame(init_data)
-    resutls_df.to_csv("results/quality_data.csv", index=False)
 
-df_old = pd.read_csv("results/quality_data.csv")
+    df_new = pd.DataFrame(new_data)
 
-ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-new_data = [
-    {
-        "Timestamp": ts,
-        "Syn_Algo": SDG,
-        "Dataset": DATASET,
-        "Average WD (Continuous Columns)": np.mean(num_stat),
-        "Average JSD (Categorical Columns)": np.mean(cat_stat),
-        "Correlation Distance": corr_dist,
-    }
-]
+    df_new = pd.concat([df_old, df_new])
+    df_new.to_csv("results/quality_data.csv", index=False)
 
-df_new = pd.DataFrame(new_data)
-
-df_new = pd.concat([df_old, df_new])
-df_new.to_csv("results/quality_data.csv", index=False)
-
-print(df_new)
+    print(df_new)
 
 
 ### alpha-Precision & beta-Recall
 # Segmentation fault ???
 # Code from TabSyn
+# different results per run???
 def alpha_beta():
     real_data = df_real.copy()
     syn_data = df_syn.copy()
@@ -211,7 +185,7 @@ def alpha_beta():
 
     num_col_idx = info["num_col_idx"]
     cat_col_idx = info["cat_col_idx"]
-    target_col_idx = info["target_col_idx"]
+    target_col_idx = [info["target_col_idx"]]
     cat_col_idx += target_col_idx
 
     num_real_data = real_data[num_col_idx]
@@ -272,3 +246,7 @@ def alpha_beta():
 
     Alpha_Precision_all = qual_res["delta_precision_alpha_naive"]
     Beta_Recall_all = qual_res["delta_coverage_beta_naive"]
+
+
+if __name__ == "__main__":
+    eval_stat()

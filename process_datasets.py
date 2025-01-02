@@ -41,11 +41,14 @@ def process_yeast(dataset):
     # multiple spaces as speeration
     df = pd.read_csv(data_path, sep="\s+", header=header)
 
+    # drop the first column
+    df.drop(columns=[0], inplace=True)
+
     # add column names
     df.columns = column_names
 
     # remove unrelevant column
-    df.drop(columns=["Sequence.Name"], inplace=True)
+    # df.drop(columns=["Sequence.Name"], inplace=True)
 
     # filter for minortiy and majoirty class
     df = df[(df[target] == majority_class) | (df[target] == minority_class)]
@@ -154,6 +157,60 @@ def process_adult(dataset):
     print(f"finished {dataset} processing")
 
 
+def process_ccfraud(dataset):
+    # no missing values
+    # remove time column
+    # create folder structure
+    os.makedirs(f"data/processed/{dataset}", exist_ok=True)
+    os.makedirs(f"data/synthetic/{dataset}", exist_ok=True)
+
+    # read info json
+    with open(f"{INFO_PATH}/{dataset}.json", "r") as f:
+        info = json.load(f)
+
+    # load relevatn information from info json
+    data_path = info["data_path"]
+    majority_class = info["majority_class"]
+    minority_class = info["minority_class"]
+    target = info["target_col"]
+
+    data_df = pd.read_csv(data_path)
+    data_df.drop(columns=["Time"], inplace=True)
+
+    # split data
+    X = data_df.iloc[:, :-1]
+    y = data_df["Class"]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
+
+    # combine X and y again
+    X_train["Class"] = y_train
+    X_test["Class"] = y_test
+
+    train_df = X_train
+    test_df = X_test
+
+    # create different splite of training data
+    train_min = train_df[train_df[target] == minority_class]
+    train_maj_sampled = train_df[train_df[target] == majority_class].sample(
+        n=train_min.shape[0], random_state=42
+    )
+    train_balanced = pd.concat([train_min, train_maj_sampled])
+    # shuffle train_balanced
+    train_balanced = train_balanced.sample(frac=1, random_state=42).reset_index(
+        drop=True
+    )
+
+    # save processed datasets
+    save_path = f"data/processed/{dataset}"
+    train_min.to_csv(f"{save_path}/train_min.csv", index=False)
+    train_balanced.to_csv(f"{save_path}/train_balanced.csv", index=False)
+    train_df.to_csv(f"{save_path}/train_src.csv", index=False)
+    test_df.to_csv(f"{save_path}/test.csv", index=False)
+
+    print(f"finished {dataset} processing")
+
+
 if __name__ == "__main__":
     DATASET = args.dataset
     if DATASET == "yeast":
@@ -162,6 +219,9 @@ if __name__ == "__main__":
     elif DATASET == "adult":
         print("Process adult dataset")
         process_adult(DATASET)
+    elif DATASET == "cc-fraud":
+        print("Process creditcard fraud dataset")
+        process_ccfraud(DATASET)
     else:
         print(f"{DATASET} not implemented")
         sys.exit(1)
