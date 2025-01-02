@@ -8,13 +8,13 @@ import shutil
 
 TYPE_TRANSFORM = {"float", np.float32, "str", str, "int", int}
 
-INFO_PATH = "data/Info"
+# INFO_PATH = "data/Info"
 
-parser = argparse.ArgumentParser(description="process dataset")
+# parser = argparse.ArgumentParser(description="process dataset")
 
 # General configs
-parser.add_argument("--dataname", type=str, default=None, help="Name of dataset.")
-args = parser.parse_args()
+# parser.add_argument("--dataset", type=str, default=None, help="Name of dataset.")
+# args = parser.parse_args()
 
 
 # did not work
@@ -105,17 +105,22 @@ def train_val_test_split(data_df, cat_columns, num_train=0, num_test=0):
     return train_df, test_df, seed
 
 
-def process_data(name):
-    with open(f"{INFO_PATH}/{name}.json", "r") as f:
+# reworte this function to fit the experiment structure
+def process_data(info_path, data_path, dataset):
+    with open(f"{info_path}/{dataset}.json", "r") as f:
         info = json.load(f)
 
-    data_path = info["data_path"]
-    if info["file_type"] == "csv":
-        data_df = pd.read_csv(data_path, header=info["header"], skipinitialspace=True)
+    #    data_path = info["data_path"]
+    #    if info["file_type"] == "csv":
+    #        data_df = pd.read_csv(data_path, header=info["header"], skipinitialspace=True)
 
-    elif info["file_type"] == "xls":
-        data_df = pd.read_excel(data_path, sheet_name="Data", header=1)
-        data_df = data_df.drop("ID", axis=1)
+    # elif info["file_type"] == "xls":
+    #    data_df = pd.read_excel(data_path, sheet_name="Data", header=1)
+    #    data_df = data_df.drop("ID", axis=1)
+
+    # load train data
+    train_path = f"{data_path}/processed/{dataset}/train_balanced.csv"
+    data_df = pd.read_csv(train_path)
 
     num_data = data_df.shape[0]
 
@@ -137,66 +142,68 @@ def process_data(name):
 
     num_columns = [column_names[i] for i in num_col_idx]
     cat_columns = [column_names[i] for i in cat_col_idx]
-    target_columns = [column_names[i] for i in target_col_idx]
+    # target_columns = [column_names[i] for i in target_col_idx]
 
-    if info["test_path"]:
+    #    if info["test_path"]:
+    #
+    #        # if testing data is given
+    #        test_path = info["test_path"]
+    #
+    #        with open(test_path, "r") as f:
+    #            lines = f.readlines()[1:]
+    #            test_save_path = f"data/{name}/test.data"
+    #            if not os.path.exists(test_save_path):
+    #                with open(test_save_path, "a") as f1:
+    #                    for line in lines:
+    #                        save_line = line.strip("\n").strip(".")
+    #                        f1.write(f"{save_line}\n")
 
-        # if testing data is given
-        test_path = info["test_path"]
+    test_path = f"{data_path}/processed/{dataset}/test.csv"
+    print(test_path)
+    test_df = pd.read_csv(test_path)
+    train_df = data_df
 
-        with open(test_path, "r") as f:
-            lines = f.readlines()[1:]
-            test_save_path = f"data/{name}/test.data"
-            if not os.path.exists(test_save_path):
-                with open(test_save_path, "a") as f1:
-                    for line in lines:
-                        save_line = line.strip("\n").strip(".")
-                        f1.write(f"{save_line}\n")
-
-        test_df = pd.read_csv(test_save_path, header=None, skipinitialspace=True)
-        train_df = data_df
-
-    else:
-        # Train/ Test Split, 90% Training, 10% Testing (Validation set will be selected from Training set)
-
-        num_train = int(num_data * 0.9)
-        num_test = num_data - num_train
-
-        train_df, test_df, seed = train_val_test_split(
-            data_df, cat_columns, num_train, num_test
-        )
+    #    else:
+    #        # Train/ Test Split, 90% Training, 10% Testing (Validation set will be selected from Training set)
+    #
+    #        num_train = int(num_data * 0.9)
+    #        num_test = num_data - num_train
+    #
+    #        train_df, test_df, seed = train_val_test_split(
+    #            data_df, cat_columns, num_train, num_test
+    #        )
 
     train_df.columns = range(len(train_df.columns))
     test_df.columns = range(len(test_df.columns))
 
-    print(name, train_df.shape, test_df.shape, data_df.shape)
+    print(dataset, train_df.shape, test_df.shape, data_df.shape)
 
     # Filter to only have the minority class in the dataset
     # train_df = only_minority_class_in_df(train_df, target_col_idx, ">50K")
     # test_df = only_minority_class_in_df(test_df, target_col_idx, ">50K")
     # print("train_df before:", train_df)
 
-    train_df_src = train_df.copy()
+    # train_df_src = train_df.copy()
 
-    print("balance majority and minoirty class by downsampling majoirity")
+    #    print("balance majority and minoirty class by downsampling majoirity")
+    #
+    #    print("min_class:", minority_class)
+    #    print("maj_class:", majority_class)
+    #    print("target_col_idx:", target_col_idx[0])
+    #    minority_df = train_df[train_df[target_col_idx[0]] == minority_class]
+    #    majoirty_df = train_df[train_df[target_col_idx[0]] == majority_class]
+    #    print("size minority df:", minority_df.shape)
+    #    print("size majoirity df:", majoirty_df.shape)
+    #
+    #    minority_size = len(minority_df)
+    #    print("size minority:", minority_size)
+    #    print(minority_df)
 
-    print("min_class:", minority_class)
-    print("maj_class:", majority_class)
-    print("target_col_idx:", target_col_idx[0])
-    minority_df = train_df[train_df[target_col_idx[0]] == minority_class]
-    majoirty_df = train_df[train_df[target_col_idx[0]] == majority_class]
-    print("size minority df:", minority_df.shape)
-    print("size majoirity df:", majoirty_df.shape)
+    #    majoirty_sampled = majoirty_df.sample(n=minority_size, random_state=42)
 
-    minority_size = len(minority_df)
-    print("size minority:", minority_size)
-    print(minority_df)
-
-    majoirty_sampled = majoirty_df.sample(n=minority_size, random_state=42)
-
-    train_df = pd.concat([minority_df, majoirty_sampled]).sample(
-        frac=1, random_state=42
-    )
+    #    train_df = pd.concat([minority_df, majoirty_sampled]).sample(
+    #        frac=1, random_state=42
+    #    )
 
     print(train_df.shape)
     print(train_df[target_col_idx].value_counts())
@@ -217,45 +224,44 @@ def process_data(name):
         col_info["type"] = "categorical"
         col_info["categorizes"] = list(set(train_df[col_idx]))
 
-    for col_idx in target_col_idx:
-        if info["task_type"] == "regression":
-            col_info[col_idx] = {}
-            col_info["type"] = "numerical"
-            col_info["max"] = float(train_df[col_idx].max())
-            col_info["min"] = float(train_df[col_idx].min())
-        else:
-            col_info[col_idx] = {}
-            col_info["type"] = "categorical"
-            col_info["categorizes"] = list(set(train_df[col_idx]))
+    # for col_idx in target_col_idx:
+    #    if info["task_type"] == "regression":
+    #        col_info[col_idx] = {}
+    #        col_info["type"] = "numerical"
+    #        col_info["max"] = float(train_df[col_idx].max())
+    #        col_info["min"] = float(train_df[col_idx].min())
+    #    else:
+    #        col_info[col_idx] = {}
+    #        col_info["type"] = "categorical"
+    #        col_info["categorizes"] = list(set(train_df[col_idx]))
+
+    col_info[target_col_idx] = {}
+    col_info["type"] = "categorical"
+    col_info["categorizes"] = list(set(train_df[col_idx]))
 
     info["column_info"] = col_info
 
     train_df.rename(columns=idx_name_mapping, inplace=True)
     test_df.rename(columns=idx_name_mapping, inplace=True)
-    train_df_src.rename(columns=idx_name_mapping, inplace=True)
 
-    for col in num_columns:
-        train_df_src.loc[train_df_src[col] == "?", col] = np.nan
-    for col in cat_columns:
-        train_df_src.loc[train_df_src[col] == "?", col] = "nan"
-    for col in num_columns:
-        train_df.loc[train_df[col] == "?", col] = np.nan
-    for col in cat_columns:
-        train_df.loc[train_df[col] == "?", col] = "nan"
-    for col in num_columns:
-        test_df.loc[test_df[col] == "?", col] = np.nan
-    for col in cat_columns:
-        test_df.loc[test_df[col] == "?", col] = "nan"
+    # for col in num_columns:
+    #    train_df.loc[train_df[col] == "?", col] = np.nan
+    # for col in cat_columns:
+    #    train_df.loc[train_df[col] == "?", col] = "nan"
+    # for col in num_columns:
+    #    test_df.loc[test_df[col] == "?", col] = np.nan
+    # for col in cat_columns:
+    #    test_df.loc[test_df[col] == "?", col] = "nan"
 
     X_num_train = train_df[num_columns].to_numpy().astype(np.float32)
     X_cat_train = train_df[cat_columns].to_numpy()
-    y_train = train_df[target_columns].to_numpy()
+    y_train = train_df[target_col].to_numpy()
 
     X_num_test = test_df[num_columns].to_numpy().astype(np.float32)
     X_cat_test = test_df[cat_columns].to_numpy()
-    y_test = test_df[target_columns].to_numpy()
+    y_test = test_df[target_col].to_numpy()
 
-    save_dir = f"data/{name}"
+    save_dir = f"{data_path}/processed/{dataset}"
     np.save(f"{save_dir}/X_num_train.npy", X_num_train)
     np.save(f"{save_dir}/X_cat_train.npy", X_cat_train)
     np.save(f"{save_dir}/y_train.npy", y_train)
@@ -265,21 +271,18 @@ def process_data(name):
     np.save(f"{save_dir}/y_test.npy", y_test)
 
     train_df[num_columns] = train_df[num_columns].astype(np.float32)
-    train_df_src[num_columns] = train_df_src[num_columns].astype(np.float32)
     test_df[num_columns] = test_df[num_columns].astype(np.float32)
 
     train_df.to_csv(f"{save_dir}/train.csv", index=False)
-    train_df_src.to_csv(f"{save_dir}/train_src.csv", index=False)
     test_df.to_csv(f"{save_dir}/test.csv", index=False)
 
-    if not os.path.exists(f"synthetic/{name}"):
-        os.makedirs(f"synthetic/{name}")
+    # if not os.path.exists(f"synthetic/{name}"):
+    #    os.makedirs(f"synthetic/{name}")
 
-    print("check value counts of workclass:", train_df["workclass"].value_counts())
+    # print("check value counts of workclass:", train_df["workclass"].value_counts())
 
-    train_df.to_csv(f"synthetic/{name}/real.csv", index=False)
-    train_df_src.to_csv(f"synthetic/{name}/real_src.csv", index=False)
-    test_df.to_csv(f"synthetic/{name}/test.csv", index=False)
+    # train_df.to_csv(f"synthetic/{name}/real.csv", index=False)
+    # test_df.to_csv(f"synthetic/{name}/test.csv", index=False)
 
     print("Numerical", X_num_train.shape)
     print("Categorical", X_cat_train.shape)
@@ -314,37 +317,40 @@ def process_data(name):
             metadata["columns"][i]["sdtype"] = "numerical"
             metadata["columns"][i]["computer_representation"] = "Float"
 
-    else:
-        for i in target_col_idx:
-            metadata["columns"][i] = {}
-            metadata["columns"][i]["sdtype"] = "categorical"
+    # else:
+    #    for i in target_col_idx:
+    #        metadata["columns"][i] = {}
+    #        metadata["columns"][i]["sdtype"] = "categorical"
+
+    metadata["columns"][target_col_idx] = {}
+    metadata["columns"][target_col_idx]["sdtype"] = "categorical"
 
     info["metadata"] = metadata
 
-    with open(f"{save_dir}/info.json", "w") as file:
+    save_dir_json = f"data/{dataset}"
+    with open(f"{save_dir_json}/info.json", "w") as file:
         json.dump(info, file, indent=4)
 
-    print(f"Processing and Saving {name} Successfully!")
+    print(f"Processing and Saving {dataset} Successfully!")
 
-    print(name)
     print("Total", info["train_num"] + info["test_num"])
     print("Train", info["train_num"])
     print("Test", info["test_num"])
     if info["task_type"] == "regression":
-        num = len(info["num_col_idx"] + info["target_col_idx"])
+        num = len(info["num_col_idx"] + [info["target_col_idx"]])
         cat = len(info["cat_col_idx"])
     else:
-        cat = len(info["cat_col_idx"] + info["target_col_idx"])
+        cat = len(info["cat_col_idx"] + [info["target_col_idx"]])
         num = len(info["num_col_idx"])
     print("Num", num)
     print("Cat", cat)
 
 
-if __name__ == "__main__":
-
-    if args.dataname:
-        process_data(args.dataname)
-    else:
-        # for name in ['adult', 'default', 'shoppers', 'magic', 'beijing', 'news']:
-        for name in ["adult"]:
-            process_data(name)
+# if __name__ == "__main__":
+#
+#    if args.dataname:
+#        process_data(args.dataname)
+#    else:
+#        # for name in ['adult', 'default', 'shoppers', 'magic', 'beijing', 'news']:
+#        for name in ["adult"]:
+#            process_data(name)

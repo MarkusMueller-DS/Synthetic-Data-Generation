@@ -12,8 +12,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--dataset", type=str, required=True, help="Name of the dataset (e.g., 'adult')"
 )
-DATA_PATH = f"../../data"
-INFO_PATH = f"../../data/info/"
+DATA_PATH = "../../data"
+INFO_PATH = "../../data/info/"
 
 
 # need to use src dataset

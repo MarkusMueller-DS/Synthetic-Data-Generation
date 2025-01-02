@@ -24,6 +24,7 @@ from torch.nn import (
 from model.synthesizer.transformer import ImageTransformer, DataTransformer
 from model.privacy_utils.rdp_accountant import compute_rdp, get_privacy_spent
 from tqdm import tqdm
+import sys
 
 
 class Classifier(Module):
@@ -674,10 +675,13 @@ class CTABGANSynthesizer:
         data = np.concatenate(data, axis=0)
         result, resample = self.transformer.inverse_transform(data)
         counter = 0
+        print(result)
 
+        sys.exit(1)
         while len(result) < n:
             counter += 1
             print("Step:", counter)
+            print("len of generated data:", len(result))
             data_resample = []
             steps_left = resample // self.batch_size + 1
 

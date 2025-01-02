@@ -40,7 +40,7 @@ def get_args():
         "--dataname", type=str, default="adult", help="Name of dataset."
     )
     parser.add_argument(
-        "--mode", type=str, default="train", help="Mode: train or sample."
+        "--mode", type=str, default="train", help="Mode: process, train or sample."
     )
     parser.add_argument(
         "--method", type=str, default="tabsyn", help="Method: tabsyn or baseline."
