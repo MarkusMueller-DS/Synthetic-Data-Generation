@@ -42,6 +42,8 @@ def main(args):
         num_samples = 33758
     if args.dataname == "yeast":
         num_samples = 658
+    if args.dataname == "cc-fraud":
+        num_samples = 454114
     print("num_sample:", num_samples)
     sample_dim = in_dim
 
