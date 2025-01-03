@@ -1,6 +1,6 @@
 {
     "name": "fraud",
-    "taks_type": "binclass",
+    "task_type": "binclass",
     "target_col": "Class",
     "header": null,
     "column_names": [
@@ -35,7 +35,7 @@
         "Amount",
         "Class"
     ],
-    "num_columns": [
+    "num_col_idx": [
         0,
         1,
         2,
@@ -66,7 +66,7 @@
         27,
         28
     ],
-    "cat_columns": [],
+    "cat_col_idx": [],
     "target_col_idx": 29,
     "data_path": "data/raw/cc-fraud/creditcard.csv",
     "test_path": null,

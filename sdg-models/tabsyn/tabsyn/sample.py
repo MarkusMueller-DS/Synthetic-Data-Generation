@@ -1,3 +1,4 @@
+import os
 import torch
 
 import argparse
@@ -17,6 +18,7 @@ def main(args):
     # device = "cpu"
     steps = args.steps
     save_path = args.save_path
+    os.makedirs(save_path, exist_ok=True)
 
     train_z, _, _, ckpt_path, info, num_inverse, cat_inverse = get_input_generate(args)
     print(train_z)
