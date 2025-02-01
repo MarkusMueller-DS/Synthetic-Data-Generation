@@ -1,0 +1,122 @@
+{
+    "name": "yeast",
+    "task_type": "binclass",
+    "header": null,
+    "column_names": [
+        "mcg",
+        "gvh",
+        "alm",
+        "mit",
+        "erl",
+        "pox",
+        "vac",
+        "nuc",
+        "localization.site"
+    ],
+    "num_col_idx": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+    ],
+    "cat_col_idx": [],
+    "target_col_idx": [
+        8
+    ],
+    "target_col": "localization.site",
+    "file_type": "csv",
+    "data_path": "data/raw/yeast/yeast.data",
+    "test_path": null,
+    "majority_class": "CYT",
+    "minority_class": "ME2",
+    "column_info": {
+        "0": {},
+        "type": "categorical",
+        "max": 0.47,
+        "min": 0.11,
+        "1": {},
+        "2": {},
+        "4": {},
+        "5": {},
+        "6": {},
+        "7": {},
+        "8": {},
+        "categorizes": [
+            "CYT",
+            "ME2"
+        ]
+    },
+    "train_num": 82,
+    "test_num": 103,
+    "idx_mapping": {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "3": 7,
+        "4": 3,
+        "5": 4,
+        "6": 5,
+        "7": 6,
+        "8": 8
+    },
+    "inverse_idx_mapping": {
+        "0": 0,
+        "1": 1,
+        "2": 2,
+        "7": 3,
+        "3": 4,
+        "4": 5,
+        "5": 6,
+        "6": 7,
+        "8": 8
+    },
+    "idx_name_mapping": {
+        "0": "mcg",
+        "1": "gvh",
+        "2": "alm",
+        "3": "mit",
+        "4": "erl",
+        "5": "pox",
+        "6": "vac",
+        "7": "nuc",
+        "8": "localization.site"
+    },
+    "metadata": {
+        "columns": {
+            "0": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "1": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "2": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "4": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "5": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "6": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "7": {
+                "sdtype": "numerical",
+                "computer_representation": "Float"
+            },
+            "8": {
+                "sdtype": "categorical"
+            }
+        }
+    }
+}

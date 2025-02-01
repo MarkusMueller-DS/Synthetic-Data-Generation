@@ -1,0 +1,36 @@
+{
+    "name": "yeast",
+    "task_type": "binclass",
+    "header": null,
+    "column_names": [
+        "mcg",
+        "gvh",
+        "alm",
+        "mit",
+        "erl",
+        "pox",
+        "vac",
+        "nuc",
+        "localization.site"
+    ],
+    "num_col_idx": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+    ],
+    "cat_col_idx": [],
+    "target_col_idx": [
+        8
+    ],
+    "target_col": "localization.site",
+    "file_type": "csv",
+    "data_path": "data/raw/yeast/yeast.data",
+    "test_path": null,
+    "majority_class": "CYT",
+    "minority_class": "ME2"
+}
