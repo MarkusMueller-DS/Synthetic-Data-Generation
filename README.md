@@ -10,37 +10,37 @@ Repo for bachelor Thesis
 
 ### Create Python Environments
 
-The environemt ymls are in the folder `environments`.
-Create Conda environement (replace the yml file for each environemtn):
+The environemt ymls are in the folder `environments`.  
+Create Conda environement (replace the yml file for each environemtn):  
 `conda env create -f environemt.yml`
 
 #### General Environment
 
-Python: 3.10.15
-Environment: `environment-sdg.yml`
+- Python: 3.10.15
+- Environment: `environment-sdg.yml`
 
 ### TabSyn
 
-Github repo: https://github.com/amazon-science/tabsyn
-Python: 3.10.15
-Environment: `environment-tabsyn.yml`
+- Github repo: https://github.com/amazon-science/tabsyn
+- Python: 3.10.15
+- Environment: `environment-tabsyn.yml`
 
 #### CTAB-GAN-Plus
 
-Github repo: https://github.com/Team-TUD/CTAB-GAN-Plus
-Python: 3.8.20
-Environment: `environment-ctab.yml`
+- Github repo: https://github.com/Team-TUD/CTAB-GAN-Plus
+- Python: 3.8.20
+- Environment: `environment-ctab.yml`
 
 #### VAE-BGM
 
-Github repo: https://github.com/Patricia-A-Apellaniz/vae-bgm_data_generator
-Python: 3.8.20
-Environment: `environment-vae-bgm.yml`
+- Github repo: https://github.com/Patricia-A-Apellaniz/vae-bgm_data_generator
+- Python: 3.8.20
+- Environment: `environment-vae-bgm.yml`
 
 #### CTGAN & TVAE
 
-Python: 3.10.16
-Environment: `environment-sdv.yml`
+- Python: 3.10.16
+- Environment: `environment-sdv.yml`
 
 ### Download Dataset
 
@@ -159,6 +159,46 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 
 #### Data Quality
 
+- the results of the data quality evaluaiton are saved in `results/quality_data.csv`
+- the evaluation skript for the data quality needs to be run for every combination of dataset and model
+- the `ci` argument is only relevant for the cc-fraud dataset
+
+1. activate the general environment
+   `conda activate sdg-eda-env`
+
+2. run the python file
+   `python eval/eval_quality.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
+
 #### Data Visualization
 
+- visualizations are saved in `results/plots`
+- the evaluation skript for the data visualization needs to be run for every combination of dataset and model
+- the `ci` argument is only relevant for the cc-fraud dataset
+- column distribution plots and t-SNE visualizations are generated simultaneously but can be commented out if only one of them is required (line 408 & 409).
+
+1. activate the general environment
+   `conda activate sdg-eda-env`
+
+2. run the python file
+   `python eval/eval_plots.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
+
 #### Classification Performance
+
+- the results of the data quality evaluaiton are saved in `results/`
+- the evaluation skript for the clf performance of the baseline needs to be run for every dataset
+- the evaluation skript for the clf performance of the different models needs to be run for every dataset and model
+- the `ci` argument is only relevant for the cc-fraud dataset
+
+1. activate the general environment
+   `conda activate sdg-eda-env`
+
+2. run baseline classification
+   `python eval/eval_clf_baseline.py --dataset <name_of_dataset> --ci <1/5>`
+
+3. run classification for the different models
+   `python eval/eval_clf.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
+
+## Misc files and skripts
+
+- `eval/eval_create_xlsc.py`: creates excel tables for the thesis
+- `zip_syn_data.py`: zips the synthetic data to better copy from GPU server

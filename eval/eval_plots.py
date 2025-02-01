@@ -1,6 +1,3 @@
-# info: works with sdg-eda-env
-# ToDo: does not work with eval-env
-
 import pandas as pd
 import os
 import argparse
@@ -408,7 +405,7 @@ def tsne():
     plt.savefig(f"{output_folder_tsne}/{SDG}.png", dpi=300, bbox_inches="tight")
 
 
-# column_plots()
+column_plots()
 tsne()
 
 print("Finished plots creation")
