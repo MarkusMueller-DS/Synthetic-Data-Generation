@@ -39,6 +39,7 @@ Create Conda environement (replace the yml file for each environemtn):
 
 #### CTGAN & TVAE
 
+- SDV Docu: https://docs.sdv.dev/sdv/single-table-data/modeling/synthesizers
 - Python: 3.10.16
 - Environment: `environment-sdv.yml`
 
@@ -202,3 +203,5 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 
 - `eval/eval_create_xlsc.py`: creates excel tables for the thesis
 - `zip_syn_data.py`: zips the synthetic data to better copy from GPU server
+- `data/info`: relevant information of the different datasets (important)
+-
