@@ -10,7 +10,7 @@ Repo for bachelor Thesis
 
 ### Create Python Environments
 
-Here are the instruction on how to create the different environments. I tested to expport the different environemtns as a yml file and and then create a new environment from that file but there were multipe errors regards the pip packages so here is a step by step process for every environment needed.
+Here are the instruction on how to create the different environments.
 
 #### General Environment
 
@@ -23,7 +23,7 @@ pip install -r requirements-sdg.txt
 ### TabSyn
 
 - Instructions in Github repo: https://github.com/amazon-science/tabsyn
-- the relevant requirements.txt is in the folder `environments`
+- the requirements.txt is in the folder `environments`
 
 ```
 conda create -n tabsyn-env python=3.10
@@ -36,7 +36,7 @@ pip install -r requirements-tabsyn.txt
 
 - Github repo: https://github.com/Team-TUD/CTAB-GAN-Plus
 - scikit-learn has to be installed via conda since version is no longer supported by pip
-- the relevant requirements.txt is in the folder `environments`
+- the requirements.txt is in the folder `environments`
 
 ```
 conda create -n ctab-gan-plus-env python=3.8
@@ -48,7 +48,7 @@ pip install -r requirements-ctab-gan-plus.txt
 #### VAE-BGM
 
 - Github repo: https://github.com/Patricia-A-Apellaniz/vae-bgm_data_generator
-- the relevant requirements.txt is in the folder `environments`
+- the requirements.txt is in the folder `environments`
 
 ```
 conda create -n vae-bgm-env python=3.8
