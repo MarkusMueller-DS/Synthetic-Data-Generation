@@ -14,47 +14,75 @@ Here are the instruction on how to create the different environments. I tested t
 
 #### General Environment
 
+```
+conda create -n sdg-env python=3.10
+conda activate sdg-env
+pip install -r requirements-sdg.txt
+```
+
 ### TabSyn
 
 - Instructions in Github repo: https://github.com/amazon-science/tabsyn
-- the relevant requirements.txt is in the folder `sdg-models/tabsyn/`
+- the relevant requirements.txt is in the folder `environments`
 
 ```
 conda create -n tabsyn-env python=3.10
 conda activate tabsyn-env
 conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
-pip install -r requirements.txt
+pip install -r requirements-tabsyn.txt
 ```
 
 #### CTAB-GAN-Plus
 
 - Github repo: https://github.com/Team-TUD/CTAB-GAN-Plus
-- the requirements.txt is in the folder `sdg-models/ctab-gan-plus`
+- scikit-learn has to be installed via conda since version is no longer supported by pip
+- the relevant requirements.txt is in the folder `environments`
 
 ```
 conda create -n ctab-gan-plus-env python=3.8
 conda activate ctab-gan-plus-env
-
+conda install -c conda-forge scikit-learn=0.24.1
+pip install requirments-ctab-gan-plus.txt
 ```
 
 #### VAE-BGM
 
 - Github repo: https://github.com/Patricia-A-Apellaniz/vae-bgm_data_generator
-- Python: 3.8.20
-- Environment: `environment-vae-bgm.yml`
+- the relevant requirements.txt is in the folder `environments`
+
+```
+conda create -n vae-bgm-env python=3.8
+conda activate ctab-gan-plus-env
+pip install requirements-vae-bgm.txt
+```
 
 #### CTGAN & TVAE
 
 - SDV Docu: https://docs.sdv.dev/sdv/single-table-data/modeling/synthesizers
 - Python: 3.10.16
-- Environment: `environment-sdv.yml`
+
+```
+conda create -n sdv-env python=3.10
+conda activate sdv-env
+conda install -c pytorch -c conda-forge sdv
+```
+
+#### Evaluation
+
+- Environment for evaluation code
+
+```
+conda create -n eval-env python=3.10
+conda activate eval-env
+conda install -c pytorch -c conda-forge sdv
+```
 
 ### Download Dataset
 
 - raw data is downloaded in `data/raw/<name_of_datset>`
 
 1. activate the general environment:
-   `conda activate sdg-eda-env`
+   `conda activate sdg-env`
 
 2. run download_datasets.py file specifing the dataset (adult, yeast, cc-fraud)
    `python download_dataset.py --dataset <name_of_dataset>`
@@ -64,7 +92,7 @@ conda activate ctab-gan-plus-env
 - processed data is saved in `data/processed/<name_of_dataset>`
 
 1. activate the general environment:
-   `conda activate sdg-eda-env`
+   `conda activate sdg-env`
 
 2. run process_dataset.py file specifing the dataset(adult, yeast, cc-fraud)
    `python process_dataset.py --dataset <name_of_dataset>`
@@ -78,7 +106,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 #### ROS & RUS
 
 1. activate the general environemtn:
-   `conda activate sdg-eda-env`
+   `conda activate sdg-env`
 
 2. cd into the baseline folder
    `cd sdg-models/baseline`
@@ -89,7 +117,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 #### SMOTE
 
 1. activate the general environemtn:
-   `conda activate sdg-eda-env`
+   `conda activate sdg-env`
 
 2. cd into the baseline folder
    `cd sdg-models/baseline`
@@ -102,7 +130,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 #### CTGAN
 
 1. activate the sdv environment:
-   `conda activate ctgan-env`
+   `conda activate sdv-env`
 
 2. cd into ctgan folder
    `cd sdg-models/ctgan`
@@ -154,7 +182,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 #### TVAE
 
 1. activate the sdv environment:
-   `conda activate ctgan-env`
+   `conda activate sdv-env`
 
 2. cd into ctab-gan-plus folder
    `cd sdg-models/TVAE`
@@ -172,8 +200,8 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
-1. activate the general environment
-   `conda activate sdg-eda-env`
+1. activate the evaluation environment
+   `conda activate eval-env`
 
 2. run the python file
    `python eval/eval_quality.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
@@ -187,8 +215,8 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
-1. activate the general environment
-   `conda activate sdg-eda-env`
+1. activate the eval environment
+   `conda activate eval-env`
 
 2. run the python file
    `python eval/eval_plots.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
@@ -202,8 +230,8 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
-1. activate the general environment
-   `conda activate sdg-eda-env`
+1. activate the eval environment
+   `conda activate eval-env`
 
 2. run baseline classification
    `python eval/eval_clf_baseline.py --dataset <name_of_dataset> --ci <1/5>`

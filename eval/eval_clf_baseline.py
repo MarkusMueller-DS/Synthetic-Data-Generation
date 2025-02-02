@@ -67,6 +67,8 @@ with open(info_path, "r") as f:
 ###
 # logger definition
 ###
+# creat log folder
+os.makedirs("logs", exist_ok=True)
 # set up logging
 logger = logging.getLogger(__name__)
 for handler in logger.handlers[:]:
