@@ -10,26 +10,32 @@ Repo for bachelor Thesis
 
 ### Create Python Environments
 
-The environemt ymls are in the folder `environments`.  
-Create Conda environement (replace the yml file for each environemtn):  
-`conda env create -f environemt.yml`
+Here are the instruction on how to create the different environments. I tested to expport the different environemtns as a yml file and and then create a new environment from that file but there were multipe errors regards the pip packages so here is a step by step process for every environment needed.
 
 #### General Environment
 
-- Python: 3.10.15
-- Environment: `environment-sdg.yml`
-
 ### TabSyn
 
-- Github repo: https://github.com/amazon-science/tabsyn
-- Python: 3.10.15
-- Environment: `environment-tabsyn.yml`
+- Instructions in Github repo: https://github.com/amazon-science/tabsyn
+- the relevant requirements.txt is in the folder `sdg-models/tabsyn/`
+
+```
+conda create -n tabsyn-env python=3.10
+conda activate tabsyn-env
+conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
+pip install -r requirements.txt
+```
 
 #### CTAB-GAN-Plus
 
 - Github repo: https://github.com/Team-TUD/CTAB-GAN-Plus
-- Python: 3.8.20
-- Environment: `environment-ctab.yml`
+- the requirements.txt is in the folder `sdg-models/ctab-gan-plus`
+
+```
+conda create -n ctab-gan-plus-env python=3.8
+conda activate ctab-gan-plus-env
+
+```
 
 #### VAE-BGM
 
@@ -95,7 +101,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 
 #### CTGAN
 
-1. activate the sdv environemtn:
+1. activate the sdv environment:
    `conda activate ctgan-env`
 
 2. cd into ctgan folder
@@ -106,7 +112,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 
 #### CTAB-GAN-Plus
 
-1. activate the ctab-gan-plus environemtn:
+1. activate the ctab-gan-plus environment:
    `conda activate ctab-gan-plus-env`
 
 2. cd into ctab-gan-plus folder
@@ -117,7 +123,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 
 #### TabSyn
 
-1. activate the tabsyn environemtn:
+1. activate the tabsyn environment:
    `conda activate tabsyn-env`
 
 2. cd into ctab-gan-plus folder
@@ -130,7 +136,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 
 - After synthetic data generation the best syhntetic data needs to be found since 15 different examples are created
 
-1. activate the vae-bgm environemtn:
+1. activate the vae-bgm environment:
    `conda activate vae-bgm-env`
 
 2. cd into ctab-gan-plus folder
@@ -147,7 +153,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 
 #### TVAE
 
-1. activate the sdv environemtn:
+1. activate the sdv environment:
    `conda activate ctgan-env`
 
 2. cd into ctab-gan-plus folder
