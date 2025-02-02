@@ -82,21 +82,25 @@ pip install -r requirements-eval.txt
 
 - raw data is downloaded in `data/raw/<name_of_datset>`
 
-1. activate the general environment:
-   `conda activate sdg-env`
+```
+# 1. activate the general environment:
+conda activate sdg-env
 
-2. run download_datasets.py file specifing the dataset (adult, yeast, cc-fraud)
-   `python download_dataset.py --dataset <name_of_dataset>`
+# 2. run download_datasets.py file specifing the dataset (adult, yeast, cc-fraud)
+python download_dataset.py --dataset <name_of_dataset>
+```
 
 ### Process Dataset
 
 - processed data is saved in `data/processed/<name_of_dataset>`
 
-1. activate the general environment:
-   `conda activate sdg-env`
+```
+# 1. activate the general environment:
+conda activate sdg-env
 
-2. run process_dataset.py file specifing the dataset(adult, yeast, cc-fraud)
-   `python process_dataset.py --dataset <name_of_dataset>`
+# 2. run process_dataset.py file specifing the dataset(adult, yeast, cc-fraud)
+python process_dataset.py --dataset <name_of_dataset>
+```
 
 ## Create Synthetic Data
 
@@ -106,96 +110,110 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 
 #### ROS & RUS
 
-1. activate the general environemtn:
-   `conda activate sdg-env`
+```
+# 1. activate the general environemtn:
+conda activate sdg-env
 
-2. cd into the baseline folder
-   `cd sdg-models/baseline`
+# 2. cd into the baseline folder
+cd sdg-models/baseline
 
-3. run over_under_sampling.py file specifing the dataset
-   `python over_under_sampling.py --dataset <name_of_datset>`
+# 3. run over_under_sampling.py file specifing the dataset
+python over_under_sampling.py --dataset <name_of_datset>
+```
 
 #### SMOTE
 
-1. activate the general environemtn:
-   `conda activate sdg-env`
+```
+# 1. activate the general environemtn:
+conda activate sdg-env
 
-2. cd into the baseline folder
-   `cd sdg-models/baseline`
+# 2. cd into the baseline folder
+cd sdg-models/baseline
 
-3. run smote.py file specifing the dataset
-   `python smote.py --dataset <name_of_datset>`
+# 3. run smote.py file specifing the dataset
+python smote.py --dataset <name_of_datset>
+```
 
 ### SDG
 
 #### CTGAN
 
-1. activate the sdv environment:
-   `conda activate sdv-env`
+```
+# 1. activate the sdv environment:
+conda activate sdv-env
 
-2. cd into ctgan folder
-   `cd sdg-models/ctgan`
+# 2. cd into ctgan folder
+cd sdg-models/ctgan
 
-3. run main.py file specifing the dataset
-   `python main.py --dataset <name_of_dataset>`
+# 3. run main.py file specifing the dataset
+python main.py --dataset <name_of_dataset>
+```
 
 #### CTAB-GAN-Plus
 
-1. activate the ctab-gan-plus environment:
-   `conda activate ctab-gan-plus-env`
+```
+# 1. activate the ctab-gan-plus environment:
+conda activate ctab-gan-plus-env
 
-2. cd into ctab-gan-plus folder
-   `cd sdg-models/ctab-gan-plus`
+# 2. cd into ctab-gan-plus folder
+cd sdg-models/ctab-gan-plus
 
-3. run main.py file specifing the dataset
-   `python main.py --dataset <name_of_dataset>`
+# 3. run main.py file specifing the dataset
+python main.py --dataset <name_of_dataset>
+```
 
 #### TabSyn
 
-1. activate the tabsyn environment:
-   `conda activate tabsyn-env`
+```
+# 1. activate the tabsyn environment:
+conda activate tabsyn-env
 
-2. cd into tabsyn folder
-   `cd sdg-models/tabsyn`
+# 2. cd into tabsyn folder
+cd sdg-models/tabsyn
 
-3. train vae model
-   `python main.py --dataname <name_of_dataset> --method vae --mode train`
+# 3. train vae model
+python main.py --dataname <name_of_dataset> --method vae --mode train
 
-4. train diffusion model
-   `python main.py --dataname <name_of_dataset> --method tabsyn --mode train`
+# 4. train diffusion model
+python main.py --dataname <name_of_dataset> --method tabsyn --mode train
 
-5. Sample data
-   `python main.py --dataname <name_of_dataset> --method tabsyn --mode sample`
+# 5. Sample data
+python main.py --dataname <name_of_dataset> --method tabsyn --mode sample
+```
 
 #### VAE-BGM
 
 - After synthetic data generation the best syhntetic data needs to be found since 15 different examples are created
 
-1. activate the vae-bgm environment:
-   `conda activate vae-bgm-env`
+```
+# 1. activate the vae-bgm environment:
+conda activate vae-bgm-env
 
-2. cd into vae-bgm folder
-   `cd sdg-models/vae-bgm`
+# 2. cd into vae-bgm folder
+cd sdg-models/vae-bgm
 
-3. run main_genertor.py file in the folder data_generation specifing the dataset
-   `python data_generation/main_generator --dataset <name_of_dataset>`
+# 3. run main_genertor.py file in the folder data_generation specifing the dataset
+python data_generation/main_generator --dataset <name_of_dataset>
 
-4. find the best seed
-   `python find_best_seed.py --dataset <name_of_dataset>`
+# 4. find the best seed
+python find_best_seed.py --dataset <name_of_dataset>
 
-5. move synthetic data specifing the seed with the best performance from step 4
-   `python move_syn_data.py --dataset <name_of_dataset> --seed <seed_XX>`
+# 5. move synthetic data specifing the seed with the best performance from step 4
+python move_syn_data.py --dataset <name_of_dataset> --seed <seed_XX>
+```
 
 #### TVAE
 
-1. activate the sdv environment:
-   `conda activate sdv-env`
+```
+# 1. activate the sdv environment:
+conda activate sdv-env
 
-2. cd into tvae folder
-   `cd sdg-models/tvae`
+# 2. cd into tvae folder
+cd sdg-models/tvae
 
-3. run the python file for all and top-2 model specifing the dataset. When creating data for the cc-fraud dataset use the ci argument to indicate for which class imbalance. No need for the ci argument, for adult and yeast dataset
-   `python main_all.py --dataset <name_of_dataset> --ci <1/5>`
+# 3. run the python file for all and top-2 model specifing the dataset. When creating data for the cc-fraud dataset use the ci argument to indicate for which class imbalance. No need for the ci argument, for adult and yeast dataset
+python main_all.py --dataset <name_of_dataset> --ci <1/5>
+```
 
 ### Evaluation
 
@@ -207,11 +225,13 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
-1. activate the evaluation environment
-   `conda activate eval-env`
+```
+# 1. activate the evaluation environment
+conda activate eval-env
 
-2. run the python file
-   `python eval/eval_quality.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
+# 2. run the python file
+python eval/eval_quality.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>
+```
 
 #### Data Visualization
 
@@ -222,11 +242,13 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
-1. activate the eval environment
-   `conda activate eval-env`
+```
+# 1. activate the eval environment
+conda activate eval-env
 
-2. run the python file
-   `python eval/eval_plots.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
+# 2. run the python file
+python eval/eval_plots.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>
+```
 
 #### Classification Performance
 
@@ -237,14 +259,16 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
-1. activate the eval environment
-   `conda activate eval-env`
+```
+# 1. activate the eval environment
+conda activate eval-env
 
-2. run baseline classification
-   `python eval/eval_clf_baseline.py --dataset <name_of_dataset> --ci <1/5>`
+# 2. run baseline classification
+python eval/eval_clf_baseline.py --dataset <name_of_dataset> --ci <1/5>
 
-3. run classification for the different models
-   `python eval/eval_clf.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
+# 3. run classification for the different models
+python eval/eval_clf.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>
+```
 
 ## Folder Structure
 
@@ -257,7 +281,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - `eval`: python scripts for evaluation
 - `results`
   - `plots`: t-SNE and distributions of real and synthetic data
-  - `tables`: excel files containing the results of data quality and clf performance
+  - `tabele`: excel files containing the results of data quality and clf performance
   - csv and pickle file to save results
 - `sdg-models`: Code for the different methods and models
 
