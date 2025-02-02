@@ -113,8 +113,6 @@ Arguments:
 
 ### Baseline
 
-``
-
 #### ROS & RUS
 
 ```
