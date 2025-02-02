@@ -180,7 +180,7 @@ sdg-models/vae-bgm/data_generation/output_generator/
 logs/
 
 # notebooks
-notebooks/
+#notebooks/
 
 # zip of synthetic data
 syn_data.zip
