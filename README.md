@@ -106,7 +106,14 @@ python process_dataset.py --dataset <name_of_dataset>
 
 Steps to create synthetic data with the various models. The synthetic data is saved in `data/synthetic`. For baslien methods the resampled data is also safed in the same place.
 
+Arguments:
+
+- `<name_of_dataset>`: 'adult' 'yeast', 'cc-fraud'
+- `<name_of_model>`: 'smote', 'ctgan', 'tabsyn', 'ctab-gan-plus', 'vae-bgm', 'tvae-all', 'tvae-top-2'
+
 ### Baseline
+
+``
 
 #### ROS & RUS
 
@@ -222,7 +229,6 @@ python main_all.py --dataset <name_of_dataset> --ci <1/5>
 - the results of the data quality evaluaiton are saved in `results/quality_data.csv`
 - the evaluation script for the data quality needs to be run for every combination of dataset and model
 - the `ci` argument is only relevant for the cc-fraud dataset
-- `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
 ```
@@ -239,7 +245,6 @@ python eval/eval_quality.py --dataset <name_of_dataset> --model <name_of_model> 
 - the evaluation script for the data visualization needs to be run for every combination of dataset and model
 - the `ci` argument is only relevant for the cc-fraud dataset
 - column distribution plots and t-SNE visualizations are generated simultaneously but can be commented out if only one of them is required (line 408 & 409).
-- `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
 ```
@@ -256,7 +261,6 @@ python eval/eval_plots.py --dataset <name_of_dataset> --model <name_of_model> --
 - the evaluation script for the clf performance of the baseline needs to be run for every dataset
 - the evaluation script for the clf performance of the different models needs to be run for every dataset and model
 - the `ci` argument is only relevant for the cc-fraud dataset
-- `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
 - for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
 ```
