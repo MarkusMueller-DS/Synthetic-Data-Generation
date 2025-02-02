@@ -246,8 +246,22 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 3. run classification for the different models
    `python eval/eval_clf.py --dataset <name_of_dataset> --model <name_of_model> --ci <1/5>`
 
+## Folder Structure
+
+- `data`
+  - `info`: json files with information about the datsets
+  - `processed`: processed datasets used for training and evaluation
+  - `raw`: raw datasets
+  - `synthetic`: generated data from the different methods and models
+- `environments`: txt-files to build the various python environments
+- `eval`: python scripts for evaluation
+- `results`
+  - `plots`: t-SNE and distributions of real and synthetic data
+  - `tables`: excel files containing the results of data quality and clf performance
+  - csv and pickle file to save results
+- `sdg-models`: Code for the different methods and models
+
 ## Misc files and scripts
 
 - `eval/eval_create_xlsc.py`: creates excel tables for the thesis
 - `zip_syn_data.py`: zips the synthetic data to better copy from GPU server
-- `data/info`: relevant information of the different datasets (important)
