@@ -163,6 +163,8 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - the results of the data quality evaluaiton are saved in `results/quality_data.csv`
 - the evaluation script for the data quality needs to be run for every combination of dataset and model
 - the `ci` argument is only relevant for the cc-fraud dataset
+- `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
+- for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
 1. activate the general environment
    `conda activate sdg-eda-env`
@@ -176,6 +178,8 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - the evaluation script for the data visualization needs to be run for every combination of dataset and model
 - the `ci` argument is only relevant for the cc-fraud dataset
 - column distribution plots and t-SNE visualizations are generated simultaneously but can be commented out if only one of them is required (line 408 & 409).
+- `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
+- for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
 1. activate the general environment
    `conda activate sdg-eda-env`
@@ -189,6 +193,8 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 - the evaluation script for the clf performance of the baseline needs to be run for every dataset
 - the evaluation script for the clf performance of the different models needs to be run for every dataset and model
 - the `ci` argument is only relevant for the cc-fraud dataset
+- `model` argument can be: `smote`, `ctgan`, `ctab-gan-plus`, `tabsyn`, `vae-bgm`, `tvae-all` and `tave-top-2`
+- for yeast `ctab-gan-plus` is not valid (no synthetic data)
 
 1. activate the general environment
    `conda activate sdg-eda-env`

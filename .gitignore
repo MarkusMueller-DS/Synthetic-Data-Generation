@@ -170,8 +170,8 @@ data/raw/cc-fraud/
 sdg-models/tabsyn/tabsyn/ckpt
 sdg-models/tabsyn/tabysn/vae/ckpt
 
-# result plots
-results/plots/
+# result plots -> just 69 mb
+#results/plots/
 
 # output from vae-bgm
 sdg-models/vae-bgm/data_generation/output_generator/

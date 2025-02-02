@@ -209,6 +209,9 @@ def column_plots():
         fig_num.write_image(f"{output_folder_num}/{col}.png")
         # fig_num.show()
 
+    print(f"Distribution of categorical columns: {output_folder_cat}")
+    print(f"Distribution of numerical columns: {output_folder_num}")
+
 
 ####
 # T-sne
@@ -404,11 +407,10 @@ def tsne():
     # plt.show()
     plt.savefig(f"{output_folder_tsne}/{SDG}.png", dpi=300, bbox_inches="tight")
 
+    print(f"TSNE: {output_folder_tsne}")
+
 
 column_plots()
-tsne()
+# tsne()
 
 print("Finished plots creation")
-print(f"Distribution of categorical columns: {output_folder_cat}")
-print(f"Distribution of numerical columns: {output_folder_num}")
-print(f"TSNE: {output_folder_tsne}")
