@@ -42,7 +42,7 @@ pip install -r requirements-tabsyn.txt
 conda create -n ctab-gan-plus-env python=3.8
 conda activate ctab-gan-plus-env
 conda install -c conda-forge scikit-learn=0.24.1
-pip install requirments-ctab-gan-plus.txt
+pip install requirements-ctab-gan-plus.txt
 ```
 
 #### VAE-BGM
