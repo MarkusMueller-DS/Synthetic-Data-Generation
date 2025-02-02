@@ -42,7 +42,7 @@ pip install -r requirements-tabsyn.txt
 conda create -n ctab-gan-plus-env python=3.8
 conda activate ctab-gan-plus-env
 conda install -c conda-forge scikit-learn=0.24.1
-pip install requirements-ctab-gan-plus.txt
+pip install -r requirements-ctab-gan-plus.txt
 ```
 
 #### VAE-BGM
@@ -52,8 +52,8 @@ pip install requirements-ctab-gan-plus.txt
 
 ```
 conda create -n vae-bgm-env python=3.8
-conda activate ctab-gan-plus-env
-pip install requirements-vae-bgm.txt
+conda activate vae-bgm-env
+pip install -r requirements-vae-bgm.txt
 ```
 
 #### CTGAN & TVAE
@@ -75,6 +75,7 @@ conda install -c pytorch -c conda-forge sdv
 conda create -n eval-env python=3.10
 conda activate eval-env
 conda install -c pytorch -c conda-forge sdv
+pip install -r requirements-eval.txt
 ```
 
 ### Download Dataset
@@ -154,11 +155,17 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 1. activate the tabsyn environment:
    `conda activate tabsyn-env`
 
-2. cd into ctab-gan-plus folder
+2. cd into tabsyn folder
    `cd sdg-models/tabsyn`
 
-3. run main.py file specifing the dataset
-   `python main.py --dataset <name_of_dataset>`
+3. train vae model
+   `python main.py --dataname <name_of_dataset> --method vae --mode train`
+
+4. train diffusion model
+   `python main.py --dataname <name_of_dataset> --method tabsyn --mode train`
+
+5. Sample data
+   `python main.py --dataname <name_of_dataset> --method tabsyn --mode sample`
 
 #### VAE-BGM
 
@@ -167,7 +174,7 @@ Steps to create synthetic data with the various models. The synthetic data is sa
 1. activate the vae-bgm environment:
    `conda activate vae-bgm-env`
 
-2. cd into ctab-gan-plus folder
+2. cd into vae-bgm folder
    `cd sdg-models/vae-bgm`
 
 3. run main_genertor.py file in the folder data_generation specifing the dataset
@@ -177,15 +184,15 @@ Steps to create synthetic data with the various models. The synthetic data is sa
    `python find_best_seed.py --dataset <name_of_dataset>`
 
 5. move synthetic data specifing the seed with the best performance from step 4
-   `python move_syn_data.py --dataset <name_of_dataset> --seed <best_seed>`
+   `python move_syn_data.py --dataset <name_of_dataset> --seed <seed_XX>`
 
 #### TVAE
 
 1. activate the sdv environment:
    `conda activate sdv-env`
 
-2. cd into ctab-gan-plus folder
-   `cd sdg-models/TVAE`
+2. cd into tvae folder
+   `cd sdg-models/tvae`
 
 3. run the python file for all and top-2 model specifing the dataset. When creating data for the cc-fraud dataset use the ci argument to indicate for which class imbalance. No need for the ci argument, for adult and yeast dataset
    `python main_all.py --dataset <name_of_dataset> --ci <1/5>`
