@@ -281,6 +281,7 @@ python eval/eval_clf.py --dataset <name_of_dataset> --model <name_of_model> --ci
   - `synthetic`: generated data from the different methods and models
 - `environments`: txt-files to build the various python environments
 - `eval`: python scripts for evaluation
+- `notebooks`: some EDA and evaluation notebooks used to test code
 - `results`
   - `plots`: t-SNE and distributions of real and synthetic data
   - `tabele`: excel files containing the results of data quality and clf performance
